@@ -17,10 +17,8 @@
     "react-native": "^0.61.5"
   },
   "devDependencies": {
-    "@babel/runtime": "^7.9.2"
-  },
-  "dependencies": {
     "@apollo/react-hooks": "^3.1.4",
+    "@babel/runtime": "^7.9.2",
     "apollo-client": "^2.6.8",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
