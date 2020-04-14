@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
-import Cookies from 'js-cookie'
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import router from 'next/router'
 import { SIGN_IN, LOGGED_IN } from './index.graphql'
 import { UserContext } from '../../contexts/User'
 
-const SignIn = () => {
+const SignIn = ({ callback, setToken }) => {
   const user = useContext(UserContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -14,7 +13,7 @@ const SignIn = () => {
   useEffect(() => {
     const redirect = async () => {
       await user.actions.setUser({ ...data.loggedIn })
-      await router.push('/dashboard')
+      await callback()
     }
     if(data && data.loggedIn) {
       redirect()
@@ -28,8 +27,8 @@ const SignIn = () => {
       }
     })
     if(response && response.data && response.data.signIn) {
-      Cookies.set('token', response.data.signIn)
-      await loggedIn()
+      await setToken(response.data.signIn)
+      await callback()
     } else {
       throw new Error('Invalid Credentials')
     }

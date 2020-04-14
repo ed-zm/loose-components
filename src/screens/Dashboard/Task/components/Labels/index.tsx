@@ -40,7 +40,8 @@ const Labels = ({ task }) => {
     data,
     label,
     setLabel,
-    creatingLabel
+    creatingLabel,
+    organizationId
   })
 }
 

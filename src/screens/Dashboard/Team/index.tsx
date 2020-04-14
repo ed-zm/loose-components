@@ -47,7 +47,9 @@ const Team = ({ id }) => {
     onRemoveMember,
     onAddMember,
     member,
-    setMember
+    setMember,
+    addingMember,
+    members
   })
 }
 

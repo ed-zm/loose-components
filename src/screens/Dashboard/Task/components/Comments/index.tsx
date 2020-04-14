@@ -68,7 +68,10 @@ const Comments = ({ task }) => {
     data,
     comment,
     setComment,
-    creatingComment
+    mentions,
+    setMentions,
+    creatingComment,
+    onCreateComment
   })
 }
 
