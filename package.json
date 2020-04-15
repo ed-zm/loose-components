@@ -7,6 +7,9 @@
   "author": "Eduardo Zarraga <eduardoandres8391@hotmail.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "build": "tsc ."
+  },
   "peerDependencies": {
     "@apollo/react-hooks": "^3.1.4",
     "@types/react": "^16.9.15",
@@ -20,6 +23,25 @@
     "react-native": "^0.61.5"
   },
   "devDependencies": {
-    "@babel/runtime": "^7.9.2"
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-react": "^7.9.4",
+    "@babel/preset-typescript": "^7.9.0",
+    "@babel/runtime": "^7.9.2",
+    "babel-loader": "^8.1.0",
+    "react-dom": "^16.13.1",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "@apollo/react-hooks": "^3.1.4",
+    "@babel/runtime": "^7.7.6",
+    "@types/react": "^16.9.15",
+    "@types/react-native": "^0.60.24",
+    "apollo-client": "^2.6.8",
+    "graphql": "^15.0.0",
+    "graphql-tag": "^2.10.3",
+    "moment": "^2.24.0",
+    "react": "^16.13.1",
+    "react-native": "^0.61.5"
   }
 }
