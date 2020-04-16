@@ -8,7 +8,7 @@ const SignIn = ({ callback, setToken }) => {
   const user = useContext(UserContext)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [signInMutation] = useMutation(SIGN_IN)
+  const [signInMutation, { loading: signingIn, error }] = useMutation(SIGN_IN)
   const [loggedIn, { data }] = useLazyQuery(LOGGED_IN)
   useEffect(() => {
     const redirect = async () => {
@@ -38,7 +38,9 @@ const SignIn = ({ callback, setToken }) => {
     setEmail,
     password,
     setPassword,
-    onSignIn
+    onSignIn,
+    signingIn,
+    error
   })
 }
 

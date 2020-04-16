@@ -34,7 +34,8 @@ const SignUp = ({ callback }) => {
     setEmail,
     password,
     setPassword,
-    onSignUp
+    onSignUp,
+    data
   })
 }
 
