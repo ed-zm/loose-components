@@ -1,14 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import FileReaderInput from 'react-file-reader-input'
-import { useRouter } from 'next/router'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { USER, GET_S3_SIGNED_URL, CHANGE_PICTURE } from './index.graphql'
-import Cropper from '../../../components/Cropper'
 
-const User = () => {
-  const router = useRouter()
-  const { id } = router.query
+const User = ({id }) => {
   const [ picture, setPicture ] = useState({
     currentPicture: null,
     fileType: 'image/jpg',
@@ -62,23 +57,17 @@ const User = () => {
       }
     })
   }
-  return(
-    <div>
-        {data && data.user &&
-          <div>
-            <img src = {data.user.avatar || '/static/default_profile.png'} width = {30} height = {30}/>
-            <div>{ data.user.email }</div>
-            <div>{ data.user.username }</div>
-            <div>{ data.user.firstName }</div>
-            <div>{ data.user.lastName }</div>
-              <FileReaderInput type='file' onChange={ (e, pic) => changeProfilePicture(pic) } />
-          </div>
-        }
-        { currentPicture && fileType && <Cropper closeCropper = { async () => {
-          setPicture({currentPicture: null, fileType: 'image/jpg'})
-        } } src = { currentPicture } fileType = { fileType } savePicture = { savePicture }/> }
-    </div>
-  )
+  const closeCropper = async () => {
+    setPicture({currentPicture: null, fileType: 'image/jpg'})
+  }
+  return {
+    data,
+    currentPicture,
+    fileType,
+    closeCropper,
+    savePicture,
+    changeProfilePicture
+  }
 }
 
 export default User

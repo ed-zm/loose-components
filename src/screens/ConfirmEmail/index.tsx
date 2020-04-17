@@ -13,8 +13,7 @@ const ConfirmEmail = ({ code }) => {
   return({
     data,
     error,
-    loading,
-    confirmEmail
+    loading
   })
 }
 

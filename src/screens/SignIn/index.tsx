@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { useMutation, useLazyQuery } from '@apollo/react-hooks'
 import router from 'next/router'
-import { SIGN_IN, LOGGED_IN } from './index.graphql'
+import { SIGN_IN, LOGGED_IN, RESEND_VERIFICATION_EMAIL } from './index.graphql'
 import { UserContext } from '../../contexts/User'
 
 const SignIn = ({ callback, setToken }) => {
   const user = useContext(UserContext)
   const [email, setEmail] = useState('')
+  const [ resendVerificationEmailSent, setResendVerificationEmailSent ] = useState(false)
   const [password, setPassword] = useState('')
   const [signInMutation, { loading: signingIn, error }] = useMutation(SIGN_IN)
+  const [resendVerificationEmailMutation, {
+    data: resendVerificationEmailData,
+    loading: resendingVerificationEmail,
+    error: resendVerificationEmailError
+  }] = useMutation(RESEND_VERIFICATION_EMAIL)
   const [loggedIn, { data }] = useLazyQuery(LOGGED_IN)
   useEffect(() => {
     const redirect = async () => {
@@ -19,6 +25,11 @@ const SignIn = ({ callback, setToken }) => {
       redirect()
     }
   }, [data])
+  useEffect(() => {
+    if(resendVerificationEmailData && resendVerificationEmailData.resendVerificationEmail) {
+      setResendVerificationEmailSent(true)
+    }
+  }, [resendVerificationEmailData])
   const onSignIn = async () => {
     const response = await signInMutation({
       variables: {
@@ -33,6 +44,14 @@ const SignIn = ({ callback, setToken }) => {
       throw new Error('Invalid Credentials')
     }
   }
+  const onResendVerificationEmail = async () => {
+    console.log('resendVerificationEmail')
+    await resendVerificationEmailMutation({
+      variables: {
+        email
+      }
+    })
+  }
   return({
     email,
     setEmail,
@@ -40,7 +59,11 @@ const SignIn = ({ callback, setToken }) => {
     setPassword,
     onSignIn,
     signingIn,
-    error
+    error,
+    resendVerificationEmailSent,
+    resendingVerificationEmail,
+    resendVerificationEmailError,
+    onResendVerificationEmail
   })
 }
 

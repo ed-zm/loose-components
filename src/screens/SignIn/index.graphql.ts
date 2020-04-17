@@ -9,6 +9,12 @@ export const SIGN_IN = gql`
   }
 `
 
+export const RESEND_VERIFICATION_EMAIL = gql`
+  mutation($email: String!) {
+      resendVerificationEmail(email: $email)
+  }
+`
+
 export const LOGGED_IN = gql`
   query {
     loggedIn {

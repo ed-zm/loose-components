@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useMutation } from '@apollo/react-hooks'
 import { SIGN_UP } from './index.graphql'
 
@@ -8,9 +8,14 @@ const SignUp = ({ callback }) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [username, setUsername] = useState('')
-  const [signUpMutation, { data }] = useMutation(SIGN_UP)
+  const [signUpMutation, { data, loading: signingUp, error }] = useMutation(SIGN_UP)
+  useEffect(() => {
+    if(data && data.signUp) {
+      callback()
+    }
+  }, [data])
   const onSignUp = async () => {
-    const signedUp = await signUpMutation({
+    await signUpMutation({
       variables: {
         email,
         password,
@@ -19,9 +24,6 @@ const SignUp = ({ callback }) => {
         username
       }
     })
-    if(signedUp) {
-      callback()
-    }
   }
   return({
     firstName,
@@ -35,6 +37,8 @@ const SignUp = ({ callback }) => {
     password,
     setPassword,
     onSignUp,
+    signingUp,
+    error,
     data
   })
 }
