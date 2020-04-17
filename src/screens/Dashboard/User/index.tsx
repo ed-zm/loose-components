@@ -8,7 +8,7 @@ const User = ({id }) => {
     currentPicture: null,
     fileType: 'image/jpg',
   })
-  const [ openCropper, setOpenCropper ] = useState(false)
+  const [ blob, setBlob ] = useState(null)
   const { currentPicture, fileType } = picture
   const { data } = useQuery(USER, { variables: { id } })
   const [ getS3SignedUrl, { data: s3Url, error, loading }] = useLazyQuery(GET_S3_SIGNED_URL)
@@ -19,7 +19,7 @@ const User = ({id }) => {
       const extension = picture.fileType.split('/')
       s3Key = `${data.user.id}.${extension[1]}`
       new Promise( async resolve => {
-        const res = await axios.put(s3Url.getS3SignedUrl, picture.currentPicture, { headers: { 'Content-Type': fileType } })
+        const res = await axios.put(s3Url.getS3SignedUrl, blob, { headers: { 'Content-Type': fileType } })
         resolve(res)
       })
       .then((res: any) => {
@@ -36,19 +36,22 @@ const User = ({id }) => {
       })
       .then(async res => {
         await setPicture({currentPicture: null, fileType: 'image/jpg'})
-      console.log('Success')
+        await setBlob(null)
+        console.log('Success')
       })
       .catch(() => {})
     }
   }, [s3Url])
 
-  const changeProfilePicture = picture => {
+  const changeProfilePicture = async picture => {
     const file = picture.map(res => res[0].target.result)
     const currentPicture = file && file[0]
-    setPicture({currentPicture, fileType: picture[0][1].type})
+    await setPicture({currentPicture, fileType: picture[0][1].type})
+
   }
 
   const savePicture = async (blob) => {
+    await setBlob(blob)
     await getS3SignedUrl({
       variables: {
         operation: 'putObject',
