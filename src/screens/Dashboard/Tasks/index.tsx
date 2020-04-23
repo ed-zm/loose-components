@@ -33,7 +33,7 @@ const Tasks = () => {
     }
     if(organization) variables.organization = { connect: { id: organization }}
     else {
-      variables.assignTo = { connect : { id: user.id } }
+      variables.assignedTo = { connect : { id: user.id } }
     }
     createTask({
       variables: { data: variables },
