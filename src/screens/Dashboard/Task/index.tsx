@@ -12,7 +12,7 @@ const Task = ({ id }) => {
   const [ isMember, setIsMember ] = useState(false)
   const where = id.length > 6 ? { id } : { code: id }
   const { data, loading, error } = useQuery(TASK, { variables: { where, userId: user.id } })
-  useEffect(()= > {
+  useEffect(() => {
     if(data && data.task && data.task.organization && data.task.organization.users > 0) {
       setIsMember(true)
     }
