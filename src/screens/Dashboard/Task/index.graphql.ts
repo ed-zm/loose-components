@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const TASK = gql`
-  query($where: TaskWhereUniqueInput!) {
+  query($where: TaskWhereUniqueInput!, $userId: ID!) {
     task(where: $where) {
       id
       title
@@ -23,10 +23,13 @@ export const TASK = gql`
       }
       organization {
         id
+        users(where: {
+          id: $userId
+        }) {
+          id
+        }
       }
       createdAt
     }
   }
 `
-
-
