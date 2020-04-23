@@ -12,7 +12,7 @@ const ResetPassword = () => {
     email,
     setEmail,
     data,
-    onConfirmPassword
+    onResetPassword
   })
 }
 
