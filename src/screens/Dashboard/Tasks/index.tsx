@@ -35,7 +35,7 @@ const Tasks = () => {
     else {
       variables.assignedTo = { connect : { id: user.id } }
     }
-    createTask({
+    await createTask({
       variables: { data: variables },
       optimisticResponse: {
         __typename: "Mutation",
@@ -66,6 +66,10 @@ const Tasks = () => {
         proxy.writeQuery({ query: TASKS, data: { tasks: newTasks } })
       }
     })
+    setTitle('')
+    setDescription('')
+    setOrganization('')
+    setEstimated(0)
   }
   return {
     onCreateTask,
