@@ -5,6 +5,7 @@ export const ORGANIZATION = gql`
     organization(where: { id: $id }) {
       id
       name
+      githubToken
       owner {
         id
       }
