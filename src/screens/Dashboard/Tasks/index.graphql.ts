@@ -13,6 +13,9 @@ export const TASKS = gql`
       code
       createdBy {
         id
+        firstName
+        lastName
+        avatar
       }
       organization {
         id

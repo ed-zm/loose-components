@@ -38,7 +38,7 @@ const Organizations = () => {
     onCreateOrganization,
     name,
     setName,
-    data
+    organizations: (data && data.organizations) || []
   }
 }
 

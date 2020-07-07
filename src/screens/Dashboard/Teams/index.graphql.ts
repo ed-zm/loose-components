@@ -5,6 +5,11 @@ export const TEAMS = gql`
     teams {
       id
       name
+      users {
+        id
+        firstName
+        avatar
+      }
     }
   }
 `
@@ -19,6 +24,11 @@ export const CREATE_TEAM = gql`
     }) {
       id
       name
+      users {
+        id
+        firstName
+        avatar
+      }
     }
   }
 `

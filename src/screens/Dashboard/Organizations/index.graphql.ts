@@ -5,6 +5,14 @@ export const ORGANIZATIONS = gql`
     organizations {
       id
       name
+      users {
+        id
+        firstName
+        avatar
+      }
+      teams {
+        id
+      }
       owner {
         id
       }
@@ -24,6 +32,14 @@ export const CREATE_ORGANIZATION = gql`
     }) {
       id
       name
+      users {
+        id
+        firstName
+        avatar
+      }
+      teams {
+        id
+      }
       owner {
         id
       }

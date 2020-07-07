@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
-import { TEAM, ORGANIZATION_MEMBERS, ADD_MEMBER, REMOVE_MEMBER } from './index.graphql'
+import { TEAM, ORGANIZATION_MEMBERS, ADD_MEMBER, REMOVE_MEMBER, TEAM_TASKS } from './index.graphql'
 
 const Team = ({ id }) => {
+  const [tab, setTab] = useState("TASKS");
   const [ member, setMember ] = useState('')
+  const [ teamTasks, setTeamTasks ] = useState([])
   const { data } = useQuery(TEAM, { variables: { id }})
   const [ addMember, { loading: addingMember }] = useMutation(ADD_MEMBER)
   const [ removeMember, { loading: removingMember }] = useMutation(REMOVE_MEMBER)
   const [ organizationMembersQuery, { data: members, refetch: refetchOrganizationMembers }] = useLazyQuery(ORGANIZATION_MEMBERS)
+  const [ teamTasksQuery, { data: teamTasksData, refetch: refetchTeamTasks }] = useLazyQuery(TEAM_TASKS)
   const onRemoveMember = async () => {
     await removeMember({ variables: {
       teamId: data.team.id,
@@ -41,6 +44,22 @@ const Team = ({ id }) => {
   useEffect(() => {
     if(members && !!members.users.length) setMember(members.users[0].id)
   }, [members])
+  useEffect(() => {
+    console.log(teamTasksData)
+    if(teamTasksData && !!teamTasksData.tasks.length) setTeamTasks(teamTasksData.tasks)
+  }, [teamTasksData])
+  useEffect(() => {
+    console.log('team tasks')
+    if(data && data.team) {
+    console.log(0)
+      if(tab === 'TASKS') {
+        console.log(1)
+        teamTasksQuery({ variables : {
+          teamId: data.team.id
+        }})
+      }
+    }
+  }, [tab, data])
   return({
     data,
     removingMember,
@@ -49,7 +68,10 @@ const Team = ({ id }) => {
     member,
     setMember,
     addingMember,
-    members
+    members,
+    teamTasks,
+    tab,
+    setTab
   })
 }
 

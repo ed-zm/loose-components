@@ -19,6 +19,34 @@ export const TEAM = gql`
   }
 `
 
+export const TEAM_TASKS = gql`
+query($state: Int, $teamId: ID) {
+  tasks(where: {
+    state: $state,
+    team: {
+      id: $teamId
+    }
+  }) {
+    id
+    title
+    description
+    estimated
+    state
+    code
+    createdBy {
+      id
+      firstName
+      lastName
+      avatar
+    }
+    organization {
+      id
+    }
+    createdAt
+  }
+}
+`
+
 export const ORGANIZATION_MEMBERS = gql`
   query organizationMembers($organizationId: ID!, $teamId: ID!) {
     users(where: {
@@ -32,7 +60,7 @@ export const ORGANIZATION_MEMBERS = gql`
       id
       firstName
       lastName
-      teams { 
+      teams {
         id
         users {
           id
