@@ -43,16 +43,16 @@ export const UIProvider = ({ children }) => {
   // console.log('CONTEXT STATE', state)
   useEffect(() => {
     const resize = () => {
-      const width = windows.innerWidth
-      const height = windows.innerHeight
+      const width = window.innerWidth
+      const height = window.innerHeight
       const bp = breakpoint(width);
       if (width) actions.resize({ height, width, bp });
     };
     //subscribe
-    window.addEventListener("change", resize);
+    window.addEventListener("resize", resize);
     // unsubscribe
     return () => {
-      window.removeEventListener("change", resize);
+      window.removeEventListener("resize", resize);
     };
   }, []);
   return(

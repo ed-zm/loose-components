@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useMemo } from 'react'
 import Link from 'next/link'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { TEAMS, CREATE_TEAM, ORGANIZATIONS } from './index.graphql'
@@ -6,8 +6,7 @@ import { UserContext } from '../../../contexts/User'
 
 const Teams = () => {
   const user = useContext(UserContext)
-  const { data } = useQuery(TEAMS)
-  console.log(data)
+  const { data, loading, error } = useQuery(TEAMS)
   const { data: orgs } = useQuery(ORGANIZATIONS)
   const [ createTeam, { loading: creatingTeam } ] = useMutation(CREATE_TEAM)
   const [ organization, setOrganization ] = useState('')
@@ -40,6 +39,10 @@ const Teams = () => {
       }
     })
   }
+  const teams = useMemo(() => {
+    if(data && data.teams) return data.teams
+    return []
+  })
   return({
     name,
     setName,
@@ -48,7 +51,8 @@ const Teams = () => {
     orgs,
     onCreateTeam,
     creatingTeam,
-    data
+    teams,
+    loading
   })
 }
 
