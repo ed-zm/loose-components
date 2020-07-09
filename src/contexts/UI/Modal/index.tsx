@@ -1,10 +1,9 @@
 import React, { createContext, useReducer, FunctionComponent } from "react";
-import { ViewStyle } from "react-native";
 import reducer from "./reducers";
 import * as actionsForm from "./actions";
 import actionsCreator from "../../../utils/actionsCreator";
 
-interface ModelContextInitialValue {
+interface ModalContextInitialValue {
   open?: boolean;
   modal: string;
   title: string;
@@ -14,11 +13,11 @@ interface ModelContextInitialValue {
 }
 
 type Actions = {
-  openModal(object: ModelContextInitialValue): void;
+  openModal(object: ModalContextInitialValue): void;
   closeModal(): void;
 };
 
-const initialValue: ModelContextInitialValue = {
+const initialValue: ModalContextInitialValue = {
   open: false,
   modal: "",
   title: "",

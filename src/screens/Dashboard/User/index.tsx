@@ -1,18 +1,41 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
-import { USER, GET_S3_SIGNED_URL, CHANGE_PICTURE } from './index.graphql'
+import { USER, GET_S3_SIGNED_URL, CHANGE_PICTURE, USER_TEAMS } from './index.graphql'
+import { UIContext } from '../../../contexts/UI'
 
 const User = ({id }) => {
+  const ui = useContext(UIContext);
+  console.log('UI', ui)
+  const [tab, setTab] = useState("TEAMS");
+  const [user, setUser ] = useState(null)
+  const [teams, setTeams ] = useState([])
   const [ picture, setPicture ] = useState({
     currentPicture: null,
     fileType: 'image/jpg',
   })
   const [ blob, setBlob ] = useState(null)
   const { currentPicture, fileType } = picture
-  const { data } = useQuery(USER, { variables: { id } })
+  const { data, loading: userLoading } = useQuery(USER, { variables: { id } })
+  // console.log('USER LOADING 1', userLoading, data)
   const [ getS3SignedUrl, { data: s3Url, error, loading }] = useLazyQuery(GET_S3_SIGNED_URL)
+  const [ fetchTeams, { data: teamsData, error: teamsError, loading: loadingTeams }] = useLazyQuery(USER_TEAMS)
+
   const [ changePicture ] = useMutation(CHANGE_PICTURE)
+  useEffect(() => {
+    if(data && data.user) {
+      setUser(data.user)
+    }
+  }, [data])
+  useEffect(() => {
+    // console.log('USER LOADING 2', userLoading, ui)
+    if(ui.loading !== userLoading) {
+      // ui.actions.loading(!loading)
+    }
+  }, [userLoading])
+  useEffect(() => {
+    if(teamsData && teamsData.teams) setTeams(teamsData.teams)
+  })
   useEffect(() => {
     let s3Key
     if(s3Url) {
@@ -42,7 +65,11 @@ const User = ({id }) => {
       .catch(() => {})
     }
   }, [s3Url])
-
+  useEffect(() => {
+    if(user) {
+      fetchTeams({ variables: { userId: data.user.id }})
+    }
+  }, [tab])
   const changeProfilePicture = async picture => {
     const file = picture.map(res => res[0].target.result)
     const currentPicture = file && file[0]
@@ -64,7 +91,14 @@ const User = ({id }) => {
     setPicture({currentPicture: null, fileType: 'image/jpg'})
   }
   return {
-    data,
+    tab,
+    setTab,
+    user,
+    loading,
+    error,
+    loadingTeams,
+    teamsError,
+    teams,
     currentPicture,
     fileType,
     closeCropper,

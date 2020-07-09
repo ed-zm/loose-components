@@ -31,3 +31,16 @@ export const CHANGE_PICTURE = gql`
     }
   }
 `
+
+export const USER_TEAMS = gql`
+  query userTeams($userId: ID!) {
+    teams(where: {
+      users_some: {
+        id: $userId
+      }
+    }) {
+      id
+      name
+    }
+  }
+`

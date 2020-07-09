@@ -20,6 +20,8 @@ export const TASK = gql`
       }
       createdBy {
         id
+        firstName
+        lastName
       }
       organization {
         id
