@@ -8,6 +8,7 @@ export const TASK = gql`
       description
       state
       code
+      estimated
       assignedTo {
         id
         firstName
@@ -32,6 +33,17 @@ export const TASK = gql`
         }
       }
       createdAt
+    }
+  }
+`
+
+export const DELETE_TASK = gql`
+  mutation deleteTask($id: ID!) {
+    deleteTask(
+      where: {
+      id: $id
+    }) {
+      id
     }
   }
 `

@@ -45,7 +45,6 @@ const SignIn = ({ callback, setToken }) => {
     }
   }
   const onResendVerificationEmail = async () => {
-    console.log('resendVerificationEmail')
     await resendVerificationEmailMutation({
       variables: {
         email

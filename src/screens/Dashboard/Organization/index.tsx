@@ -2,13 +2,14 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { ModalContext } from '../../../contexts/UI/Modal'
-import { ORGANIZATION, GITHUB_LOGIN, GITHUB_REPOS, GITHUB_PROJECTS, UNLINK_ORGANIZATION } from './index.graphql'
+import { ORGANIZATION, DELETE_ORGANIZATION, GITHUB_LOGIN, GITHUB_REPOS, GITHUB_PROJECTS, UNLINK_ORGANIZATION } from './index.graphql'
 
 const Organization = ({ id }) => {
   const { actions } = useContext(ModalContext);
   const [ token, setToken ] = useState('')
   const [ tab, setTab ] = useState('REPOSITORIES')
   const { data, loading, error } = useQuery(ORGANIZATION, { variables: { id } })
+  const [ deleteOrganization, { loading: deletingOrganization, error: deleteOrganizationError } ] = useMutation(DELETE_ORGANIZATION)
   const [ githubLogin, { data: github }] = useMutation(GITHUB_LOGIN)
   const [ unlinkOrganization ] = useMutation(UNLINK_ORGANIZATION)
   const [
@@ -84,10 +85,27 @@ const Organization = ({ id }) => {
       }
     }
   }, [token, organization, tab])
+  const onDeleteOrganization = async () => {
+    await deleteOrganization({
+      variables: {
+        id: organization.id
+      },
+      optimisticResponse: {
+        __typename: "Mutation",
+        deleteOrganization: {
+          __typename: "Organization",
+          id: organization.id
+        }
+      }
+    })
+  }
   return {
     organization,
     loading,
     error,
+    onDeleteOrganization,
+    deletingOrganization,
+    deleteOrganizationError,
     projects: (projectsData && projectsData.githubProjects) ? projectsData.githubProjects : [],
     loadingProjects,
     projectsError,

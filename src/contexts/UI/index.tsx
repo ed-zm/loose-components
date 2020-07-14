@@ -40,7 +40,6 @@ export const UIContext = createContext(initialValue)
 export const UIProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialValue);
   const actions = actionsCreator(actionsForm, dispatch);
-  // console.log('CONTEXT STATE', state)
   useEffect(() => {
     const resize = () => {
       const width = window.innerWidth

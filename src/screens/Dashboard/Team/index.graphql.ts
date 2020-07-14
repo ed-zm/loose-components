@@ -14,6 +14,7 @@ export const TEAM = gql`
         id
         firstName
         lastName
+        username
       }
     }
   }

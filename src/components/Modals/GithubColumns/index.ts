@@ -13,7 +13,6 @@ const GithubColumns = ({ organization, project }) => {
     }
   })
   const onImportGithubCards = async (columnId) => {
-    console.log(organization.id, columnId, project.id)
     await importGithubCards({
       variables: {
         organizationId: organization.id,

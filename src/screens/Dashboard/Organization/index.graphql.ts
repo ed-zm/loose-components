@@ -14,6 +14,17 @@ export const ORGANIZATION = gql`
   }
 `
 
+export const DELETE_ORGANIZATION = gql`
+  mutation deleteOrganization($id: ID!) {
+    deleteOrganization(
+      where: {
+      id: $id
+    }) {
+      id
+    }
+  }
+`
+
 export const GITHUB_LOGIN = gql`
   mutation($code: String!, $organizationId: ID!) {
     githubLogin(code: $code, organizationId: $organizationId)

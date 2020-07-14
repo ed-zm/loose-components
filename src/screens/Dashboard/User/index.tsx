@@ -14,7 +14,6 @@ const User = ({id }) => {
   const [ blob, setBlob ] = useState(null)
   const { currentPicture, fileType } = picture
   const { data, loading: userLoading } = useQuery(USER, { variables: { id } })
-  console.log(userLoading)
   const [ getS3SignedUrl, { data: s3Url, error, loading }] = useLazyQuery(GET_S3_SIGNED_URL)
   const [ fetchTeams, { data: teamsData, error: teamsError, loading: loadingTeams }] = useLazyQuery(USER_TEAMS)
   const [ changePicture ] = useMutation(CHANGE_PICTURE)
@@ -43,7 +42,6 @@ const User = ({id }) => {
       .then(async res => {
         await setPicture({currentPicture: null, fileType: 'image/jpg'})
         await setBlob(null)
-        console.log('Success')
       })
       .catch(() => {})
     }

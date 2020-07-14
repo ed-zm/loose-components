@@ -12,10 +12,10 @@ const Team = ({ id }) => {
   const [ removeMember, { loading: removingMember }] = useMutation(REMOVE_MEMBER)
   const [ organizationMembersQuery, { data: members, refetch: refetchOrganizationMembers }] = useLazyQuery(ORGANIZATION_MEMBERS)
   const [ teamTasksQuery, { data: teamTasksData, refetch: refetchTeamTasks }] = useLazyQuery(TEAM_TASKS)
-  const onRemoveMember = async () => {
+  const onRemoveMember = async (memberId) => {
     await removeMember({ variables: {
       teamId: data.team.id,
-      memberId: member.id
+      memberId
     }})
     await refetchOrganizationMembers({
       fetchPolicy: 'cache-and-network'
@@ -45,15 +45,11 @@ const Team = ({ id }) => {
     if(members && !!members.users.length) setMember(members.users[0].id)
   }, [members])
   useEffect(() => {
-    console.log(teamTasksData)
     if(teamTasksData && !!teamTasksData.tasks.length) setTeamTasks(teamTasksData.tasks)
   }, [teamTasksData])
   useEffect(() => {
-    console.log('team tasks')
     if(data && data.team) {
-    console.log(0)
       if(tab === 'TASKS') {
-        console.log(1)
         teamTasksQuery({ variables : {
           teamId: data.team.id
         }})
