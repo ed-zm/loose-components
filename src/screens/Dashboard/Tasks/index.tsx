@@ -14,13 +14,14 @@ interface CreateTaskVariables {
 
 const Tasks = () => {
   const [ state, setState ] = useState(0)
-  const { data, loading, refetch, error } = useQuery(TASKS, { variables: { state }})
+  const { data, loading, refetch, error, variables } = useQuery(TASKS, { variables: { state }})
   const sortedTasks = data && data.tasks ? data.tasks.sort((a, b) => a.state - b.state) : []
   useEffect(() => {
     refetch({ variables: { state } })
   }, [state])
   return {
     tasks: sortedTasks,
+    variables,
     loading,
     error,
     state,

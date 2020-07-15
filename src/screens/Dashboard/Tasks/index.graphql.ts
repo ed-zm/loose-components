@@ -20,6 +20,9 @@ export const TASKS = gql`
       organization {
         id
       }
+      team {
+        id
+      }
       createdAt
     }
   }

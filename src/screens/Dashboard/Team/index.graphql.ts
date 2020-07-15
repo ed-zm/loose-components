@@ -20,6 +20,18 @@ export const TEAM = gql`
   }
 `
 
+export const DELETE_TEAM = gql`
+  mutation deleteTeam($id: ID!) {
+    deleteTeam(
+      where: {
+        id: $id
+      }
+    ) {
+      id
+    }
+  }
+`
+
 export const TEAM_TASKS = gql`
 query($state: Int, $teamId: ID) {
   tasks(where: {

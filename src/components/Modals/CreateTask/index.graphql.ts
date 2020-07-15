@@ -15,6 +15,9 @@ export const CREATE_TASK = gql`
       organization {
         id
       }
+      team {
+        id
+      }
       createdAt
     }
   }
@@ -23,6 +26,19 @@ export const CREATE_TASK = gql`
 export const ORGANIZATIONS = gql`
   query {
     organizations {
+      id
+      name
+    }
+  }
+`
+
+export const TEAMS = gql`
+  query organizationTeams($organizationId: ID!) {
+    teams(where: {
+      organization: {
+        id: $organizationId
+      }
+    }) {
       id
       name
     }
