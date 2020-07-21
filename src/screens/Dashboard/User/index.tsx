@@ -1,23 +1,46 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react'
 import axios from 'axios'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
-import { USER, GET_S3_SIGNED_URL, CHANGE_PICTURE, USER_TEAMS } from './index.graphql'
+import { USER, GET_S3_SIGNED_URL, CHANGE_PICTURE, USER_TEAMS, UPDATE_PROFILE } from './index.graphql'
 import { UIContext } from '../../../contexts/UI'
+import { UserContext } from '../../../contexts/User'
 
 const User = ({id }) => {
+  const currentUser = useContext(UserContext)
+  const isYou = currentUser.id === id
   const ui = useContext(UIContext);
   const [tab, setTab] = useState("TEAMS");
   const [ picture, setPicture ] = useState({
     currentPicture: null,
     fileType: 'image/jpg',
   })
+  const [ bio, setBio ] = useState('')
+  const [ edit, setEdit ] = useState(false)
   const [ blob, setBlob ] = useState(null)
   const { currentPicture, fileType } = picture
   const { data, loading: userLoading } = useQuery(USER, { variables: { id } })
   const [ getS3SignedUrl, { data: s3Url, error, loading }] = useLazyQuery(GET_S3_SIGNED_URL)
   const [ fetchTeams, { data: teamsData, error: teamsError, loading: loadingTeams }] = useLazyQuery(USER_TEAMS)
   const [ changePicture ] = useMutation(CHANGE_PICTURE)
-
+  const [ updateProfile, { loading: updatingProfile } ] = useMutation(UPDATE_PROFILE)
+  const onUpdateProfile = async () => {
+    await updateProfile({
+      variables: {
+        id,
+        bio
+      },
+      optimisticResponse: {
+        __typename: 'Mutation',
+        updateUser: {
+          __typename: "User",
+          id,
+          bio
+        }
+      }
+    })
+    await setBio('')
+    await setEdit(false)
+  }
   useEffect(() => {
     let s3Key
     if(s3Url) {
@@ -85,7 +108,9 @@ const User = ({id }) => {
     if(teamsData && teamsData.teams) return teamsData.teams
     return []
   }, [teamsData])
-
+  useEffect(() => {
+    if(user) {setBio(user.biography)}
+  }, [user])
   return {
     tab,
     setTab,
@@ -99,7 +124,14 @@ const User = ({id }) => {
     fileType,
     closeCropper,
     savePicture,
-    changeProfilePicture
+    changeProfilePicture,
+    isYou,
+    edit,
+    setEdit,
+    bio,
+    setBio,
+    onUpdateProfile,
+    updatingProfile
   }
 }
 

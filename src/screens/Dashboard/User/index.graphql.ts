@@ -4,6 +4,7 @@ export const USER = gql`
   query($id: ID!) {
     user(where: { id: $id }) {
       id
+      biography
       avatar
       username
       firstName
@@ -41,6 +42,22 @@ export const USER_TEAMS = gql`
     }) {
       id
       name
+    }
+  }
+`
+
+export const UPDATE_PROFILE = gql`
+  mutation($id: ID!, $bio: String) {
+    updateUser(
+      where: {
+        id: $id
+      },
+      data: {
+        biography: $bio
+      }
+    ) {
+      id
+      biography
     }
   }
 `
