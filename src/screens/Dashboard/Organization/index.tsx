@@ -2,15 +2,26 @@ import React, { useState, useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { ModalContext } from '../../../contexts/UI/Modal'
-import { ORGANIZATION, DELETE_ORGANIZATION, GITHUB_LOGIN, GITHUB_REPOS, GITHUB_PROJECTS, UNLINK_ORGANIZATION } from './index.graphql'
+import { UserContext } from '../../../contexts/User'
+import {
+  ORGANIZATION,
+  DELETE_ORGANIZATION,
+  GITHUB_LOGIN,
+  GITHUB_REPOS,
+  GITHUB_PROJECTS,
+  UNLINK_ORGANIZATION,
+  INVITE_TO_ORGANIZATION
+} from './index.graphql'
 
 const Organization = ({ id }) => {
   const { actions } = useContext(ModalContext);
+  const user = useContext(UserContext)
   const [ token, setToken ] = useState('')
   const [ tab, setTab ] = useState('REPOSITORIES')
   const { data, loading, error } = useQuery(ORGANIZATION, { variables: { id } })
   const [ deleteOrganization, { loading: deletingOrganization, error: deleteOrganizationError } ] = useMutation(DELETE_ORGANIZATION)
   const [ githubLogin, { data: github }] = useMutation(GITHUB_LOGIN)
+  const [ inviteToOrganization ] = useMutation(INVITE_TO_ORGANIZATION)
   const [ unlinkOrganization ] = useMutation(UNLINK_ORGANIZATION)
   const [
     fetchRepositories,
@@ -99,6 +110,15 @@ const Organization = ({ id }) => {
       }
     })
   }
+  const onInviteToOrganization = async (id) => {
+    await inviteToOrganization({
+      variables: {
+        userId: user.id,
+        to: id,
+        typeId: organization.id
+      }
+    })
+  }
   return {
     organization,
     loading,
@@ -116,7 +136,8 @@ const Organization = ({ id }) => {
     onSuccess,
     tab,
     setTab,
-    onUnlinkOrganization
+    onUnlinkOrganization,
+    onInviteToOrganization
   }
 }
 
