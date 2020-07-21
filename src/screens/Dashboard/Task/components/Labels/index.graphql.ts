@@ -41,3 +41,20 @@ export const ADD_LABEL = gql`
     }
   }
 `
+
+export const REMOVE_LABEL = gql`
+  mutation removeLabel($id: ID!, $taskId: ID!) {
+    updateLabel(
+      where: {
+        id: $id
+      },
+      data: {
+        tasks: {
+          disconnect: [{ id: $taskId }]
+        }
+      }
+    ) {
+      id
+    }
+  }
+`
