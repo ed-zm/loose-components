@@ -10,6 +10,7 @@ export const COMMENTS = gql`
       id
       text
       createdAt
+      updatedAt
       task {
         id
       }

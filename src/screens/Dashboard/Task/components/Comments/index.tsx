@@ -51,7 +51,8 @@ const Comments = ({ task }) => {
               firstName: user.firstName,
               lastName: user.lastName
             },
-            createdAt: moment()
+            createdAt: moment(),
+            updatedAt: null
           }]
         }
       },
