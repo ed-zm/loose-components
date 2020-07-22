@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useMemo, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { ModalContext } from '../../../contexts/UI/Modal'
@@ -18,10 +18,10 @@ const Organization = ({ id }) => {
   const user = useContext(UserContext)
   const [ token, setToken ] = useState('')
   const [ tab, setTab ] = useState('REPOSITORIES')
-  const { data, loading, error } = useQuery(ORGANIZATION, { variables: { id } })
+  const { data, loading, error } = useQuery(ORGANIZATION, { variables: { id, userId: user.id } })
   const [ deleteOrganization, { loading: deletingOrganization, error: deleteOrganizationError } ] = useMutation(DELETE_ORGANIZATION)
   const [ githubLogin, { data: github }] = useMutation(GITHUB_LOGIN)
-  const [ inviteToOrganization ] = useMutation(INVITE_TO_ORGANIZATION)
+  const [ inviteToOrganization, { error: err} ] = useMutation(INVITE_TO_ORGANIZATION)
   const [ unlinkOrganization ] = useMutation(UNLINK_ORGANIZATION)
   const [
     fetchRepositories,
@@ -116,9 +116,34 @@ const Organization = ({ id }) => {
         userId: user.id,
         to: id,
         typeId: organization.id
-      }
+      },
+      // optimisticResponse: {
+      //   __typename: 'Mutation',
+      //   inviteToOrganization: {
+      //     __typename: "Invite",
+      //     id: -1,
+      //     to: {
+      //       __typename: "User",
+      //       id
+      //     },
+      //     from: {
+      //       __typename: "User",
+      //       id: user.id
+      //     }
+      //   }
+      // },
+      // update: (proxy, { data: { inviteToOrganization } })
     })
   }
+  const projects = useMemo(() => {
+    if(projectsData && projectsData.githubProjects) return projectsData.githubProjects
+    return []
+  }, [projectsData])
+  const repositories = useMemo(() => {
+    if(repositoriesData && repositoriesData.githubRepositories) return repositoriesData.githubRepositories
+    return []
+  }, [repositoriesData])
+  console.log('ERR', err)
   return {
     organization,
     loading,
@@ -126,10 +151,10 @@ const Organization = ({ id }) => {
     onDeleteOrganization,
     deletingOrganization,
     deleteOrganizationError,
-    projects: (projectsData && projectsData.githubProjects) ? projectsData.githubProjects : [],
+    projects,
     loadingProjects,
     projectsError,
-    repositories: (repositoriesData && repositoriesData.githubRepositories) ? repositoriesData.githubRepositories : [],
+    repositories,
     loadingRepositories,
     repositoriesError,
     onError,

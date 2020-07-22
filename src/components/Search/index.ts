@@ -4,10 +4,11 @@ import { useLazyQuery } from '@apollo/react-hooks'
 import { USERS_SEARCH } from './index.graphql'
 import { UserContext } from '../../contexts/User'
 
-const Search = ({ type }) => {
+const Search = ({ type, typeId }) => {
   const user = useContext(UserContext)
   const [ hint, setHint ] = useState('')
   const [ userSearch, { data, loading: searchingUsers, refetch } ] = useLazyQuery(USERS_SEARCH)
+  console.log(type, hint,typeId, user.id, moment().toISOString())
   useEffect(() => {
     if(hint.length > 2) {
       userSearch({
@@ -15,7 +16,8 @@ const Search = ({ type }) => {
           type,
           hint,
           userId: user.id,
-          now: moment()
+          now: moment(),
+          typeId
         }
       })
     }
