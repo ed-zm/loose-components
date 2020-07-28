@@ -3,10 +3,21 @@ import Link from 'next/link'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { TEAMS, CREATE_TEAM, ORGANIZATIONS } from './index.graphql'
 import { UserContext } from '../../../contexts/User'
+import getNodes from '../../../utils/getNodes'
 
 const Teams = () => {
   const user = useContext(UserContext)
-  const { data, loading, error } = useQuery(TEAMS)
+  const [ quantity, setQuantity ] = useState(2)
+  const [ cursor, setCursor ] = useState({after: null, before: null})
+  const [ nameFilter, setNameFilter ] = useState('')
+  const { data, loading, error } = useQuery(TEAMS, {
+    variables: {
+      nameFilter,
+      ...cursor,
+      first: quantity,
+      // last: quantity
+    }
+  })
   const { data: orgs } = useQuery(ORGANIZATIONS)
   const [ createTeam, { loading: creatingTeam } ] = useMutation(CREATE_TEAM)
   const [ organization, setOrganization ] = useState('')
@@ -39,20 +50,40 @@ const Teams = () => {
       }
     })
   }
+
   const teams = useMemo(() => {
-    if(data && data.teams) return data.teams
-    return []
-  })
+    return getNodes(data)
+  }, [data])
+  const pageInfo = useMemo(() => {
+    return teams.pageInfo
+  }, [teams])
+
+  const onSetCursor = async (action) => {
+    if(action === 'BEFORE' && pageInfo.hasPreviousPage) {
+      setCursor({ before: pageInfo.startCursor, after: null})
+    }
+    if(action === 'AFTER' && pageInfo.hasNextPage) {
+      setCursor({ before: null, after: pageInfo.endCursor })
+    }
+  }
+  const organizations = useMemo(() => {
+    return getNodes(orgs)
+  }, [orgs])
+  console.log('TEAMS', teams.nodes)
   return({
     name,
     setName,
     organization,
     setOrganization,
-    orgs,
+    orgs: organizations.nodes,
     onCreateTeam,
     creatingTeam,
-    teams,
-    loading
+    teams: teams.nodes,
+    loading,
+    nameFilter,
+    setNameFilter,
+    onSetCursor,
+    pageInfo
   })
 }
 
