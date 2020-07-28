@@ -7,6 +7,7 @@ import getNodes from '../../../utils/getNodes'
 
 const Teams = () => {
   const user = useContext(UserContext)
+  const [orderBy, setOrderBy ] = useState('createdAt_DESC')
   const [ quantity, setQuantity ] = useState(2)
   const [ cursor, setCursor ] = useState({after: null, before: null})
   const [ nameFilter, setNameFilter ] = useState('')
@@ -15,6 +16,7 @@ const Teams = () => {
       nameFilter,
       ...cursor,
       first: quantity,
+      orderBy
       // last: quantity
     }
   })

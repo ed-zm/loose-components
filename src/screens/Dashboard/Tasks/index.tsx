@@ -6,10 +6,11 @@ import getNodes from '../../../utils/getNodes'
 
 const Tasks = () => {
   const user = useContext(UserContext)
-  const [ quantity, setQuantity ] = useState(2)
+  const [orderBy, setOrderBy ] = useState('createdAt_DESC')
+  const [ quantity, setQuantity ] = useState(3)
   const [ page, setPage ] = useState(1)
   const [ titleFilter, setTitleFilter ] = useState('')
-  const [ state, setState ] = useState(2)
+  const [ state, setState ] = useState(0)
   const [ cursor, setCursor ] = useState({after: null, before: null})
   const [ organizationOrPersonal, setOrganizationOrPersonal ] = useState('')
   const [ createdOrAssigned, setCreatedOrAssigned ] = useState('')
@@ -22,6 +23,7 @@ const Tasks = () => {
       titleFilter,
       ...cursor,
       first: quantity,
+      orderBy
       // last: quantity
     }
   })

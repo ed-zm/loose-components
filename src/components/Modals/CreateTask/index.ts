@@ -16,20 +16,20 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
   const [ estimated, setEstimated ] = useState(0)
   const [ teamTask, setTeamTask ] = useState(false)
   const onCreateTask = async () => {
-    const variables: CreateTaskVariables = {
+    const createVariables: CreateTaskVariables = {
       title,
       description,
       state: 0,
       estimated,
       createdBy: { connect: { id: user.id } },
     }
-    if(organization) variables.organization = { connect: { id: organization }}
-    if(team) variables.team = { connect: { id: team }}
+    if(organization) createVariables.organization = { connect: { id: organization }}
+    if(team) createVariables.team = { connect: { id: team }}
     else {
-      variables.assignedTo = { connect : { id: user.id } }
+      createVariables.assignedTo = { connect : { id: user.id } }
     }
     await createTask({
-      variables: { data: variables },
+      variables: { data: createVariables },
       optimisticResponse: {
         __typename: "Mutation",
         createTask: {
@@ -42,7 +42,10 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
           description,
           createdBy: {
             __typename: "User",
-            id: user.id
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            avatar: user.avatar
           },
           organization: !organization ? null : {
             __typename: "Organization",
@@ -58,9 +61,11 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
       update: (proxy, { data: { createTask }}) => {
         const data = proxy.readQuery({ query: TASKS, variables })
         //@ts-ignore
-        const newTasks = tasks.slice()
-        newTasks.push(createTask)
-        proxy.writeQuery({ query: TASKS, variables, data: { tasks: newTasks } })
+        // debugger
+        const newTasks = data.tasks.edges.slice()
+        newTasks.unshift({ node: createTask, __typename: "TaskEdge" })
+        newTasks.pop()
+        proxy.writeQuery({ query: TASKS, variables, data: { tasks: { ...data.tasks, edges: newTasks } } })
       }
     })
     await setTitle('')

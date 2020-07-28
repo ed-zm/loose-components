@@ -42,7 +42,6 @@ export const TASKS = gql`
       #  count
       # }
       edges {
-        cursor
         node {
           id
           title
