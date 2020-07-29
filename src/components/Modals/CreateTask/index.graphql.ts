@@ -26,15 +26,6 @@ export const CREATE_TASK = gql`
   }
 `
 
-export const ORGANIZATIONS = gql`
-  query {
-    organizations {
-      id
-      name
-    }
-  }
-`
-
 export const TEAMS = gql`
   query organizationTeams($organizationId: ID!) {
     teams(where: {

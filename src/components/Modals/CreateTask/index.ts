@@ -7,7 +7,6 @@ import { UserContext } from '../../../contexts/User'
 const CreateTask = ({ tasks, variables, callback = () => {} }) => {
   const user = useContext(UserContext)
   const [ createTask, { loading: creatingTask } ] = useMutation(CREATE_TASK)
-  const { data: orgs } = useQuery(ORGANIZATIONS)
   const [ fetchTeams, { loading: fetchingTeams, error: fetchTeamsError, data: fetchTeamsData }] = useLazyQuery(TEAMS)
   const [ title, setTitle ] = useState('')
   const [ description, setDescription ] = useState('')
@@ -93,7 +92,6 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
     if(!!teams.length) setTeam(teams[0].id)
   }, [teams])
   return {
-    orgs,
     team,
     setTeam,
     teams,

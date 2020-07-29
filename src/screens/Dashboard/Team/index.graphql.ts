@@ -33,50 +33,161 @@ export const DELETE_TEAM = gql`
 `
 
 export const TEAM_TASKS = gql`
-query($state: Int, $teamId: ID) {
-  tasks(where: {
-    state: $state,
-    team: {
-      id: $teamId
+query(
+  $state: Int,
+  $teamId: ID,
+  $orderBy: TaskOrderByInput,
+  $first: Int,
+  $last: Int,
+  $skip: Int,
+  $before: String,
+  $after: String
+) {
+  tasks(
+    where: {
+      state: $state,
+      team: {
+        id: $teamId
+      }
+    },
+    first: $first,
+    last: $last,
+    skip: $skip,
+    before: $before,
+    after: $after,
+    orderBy: $orderBy
+  ) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
     }
-  }) {
-    id
-    title
-    description
-    estimated
-    state
-    code
-    createdBy {
-      id
-      firstName
-      lastName
-      avatar
+    # aggregate {
+    #  count
+    # }
+    edges {
+      # cursor
+      node {
+        id
+        title
+        description
+        estimated
+        state
+        code
+        createdBy {
+          id
+          firstName
+          lastName
+          avatar
+        }
+        organization {
+          id
+        }
+        createdAt
+      }
     }
-    organization {
-      id
-    }
-    createdAt
   }
 }
 `
 
 export const ORGANIZATION_MEMBERS = gql`
-  query organizationMembers($organizationId: ID!, $teamId: ID!) {
-    users(where: {
-      teams_none: {
-        id: $teamId
+  query organizationMembers(
+    $organizationId: ID!, $teamId: ID!,
+    $orderBy: UserOrderByInput,
+    $first: Int,
+    $last: Int,
+    $skip: Int,
+    $before: String,
+    $after: String
+  ) {
+    users(
+      where: {
+        teams_none: {
+          id: $teamId
+        }
+        organizations_some: {
+          id: $organizationId
+        }
+      },
+      first: $first,
+      last: $last,
+      skip: $skip,
+      before: $before,
+      after: $after,
+      orderBy: $orderBy
+    ) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
       }
-      organizations_some: {
-        id: $organizationId
-      }
-    }) {
-      id
-      firstName
-      lastName
-      teams {
-        id
-        users {
+      # aggregate {
+      #  count
+      # }
+      edges {
+        # cursor
+        node {
           id
+          firstName
+          lastName
+          teams {
+            id
+            users {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+`
+
+export const TEAM_MEMBERS = gql`
+  query organizationMembers(
+    $teamId: ID!,
+    $orderBy: UserOrderByInput,
+    $first: Int,
+    $last: Int,
+    $skip: Int,
+    $before: String,
+    $after: String
+  ) {
+    users(
+      where: {
+        teams_some: {
+          id: $teamId
+        }
+      },
+      first: $first,
+      last: $last,
+      skip: $skip,
+      before: $before,
+      after: $after,
+      orderBy: $orderBy
+    ) {
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      # aggregate {
+      #  count
+      # }
+      edges {
+        # cursor
+        node {
+          id
+          firstName
+          lastName
+          teams {
+            id
+            users {
+              id
+            }
+          }
         }
       }
     }
