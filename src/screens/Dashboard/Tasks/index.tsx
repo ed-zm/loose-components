@@ -7,40 +7,44 @@ import getNodes from '../../../utils/getNodes'
 const Tasks = () => {
   const user = useContext(UserContext)
   const [orderBy, setOrderBy ] = useState('createdAt_DESC')
-  const [ quantity, setQuantity ] = useState(3)
+  const [ quantity, setQuantity ] = useState(6)
   const [ page, setPage ] = useState(1)
   const [ titleFilter, setTitleFilter ] = useState('')
   const [ state, setState ] = useState(0)
-  const [ cursor, setCursor ] = useState({after: null, before: null})
   const [ organizationOrPersonal, setOrganizationOrPersonal ] = useState('')
   const [ createdOrAssigned, setCreatedOrAssigned ] = useState('')
-  // const variables =
-  const { data, loading, refetch, error, variables } = useQuery(TASKS, {
+  const { data, loading, refetch, error, variables, fetchMore } = useQuery(TASKS, {
     variables: {
       state: state === 2 ? null : state,
       createdBy: createdOrAssigned === 'CREATED' ? user.id : null,
       assignedTo: createdOrAssigned === 'ASSIGNED' ? user.id : null,
       titleFilter,
-      ...cursor,
       first: quantity,
       orderBy
-      // last: quantity
-    }
+    },
+    fetchPolicy: 'only-network'
   })
+  const pageInfo = useMemo(() => {
+    return getNodes(data).pageInfo
+  }, [data])
   const tasks = useMemo(() => {
     return getNodes(data)
   }, [data])
-  const pageInfo = useMemo(() => {
-    return tasks.pageInfo
-  }, [tasks])
-  const onSetCursor = async (action) => {
-    if(action === 'BEFORE' && pageInfo.hasPreviousPage) {
-      setCursor({ before: pageInfo.startCursor, after: null})
-    }
-    if(action === 'AFTER' && pageInfo.hasNextPage) {
-      setCursor({ before: null, after: pageInfo.endCursor })
+  const onFetchMore = async () => {
+    if(pageInfo.hasNextPage) {
+      await fetchMore({
+        variables: {
+          ...variables,
+          after: pageInfo.endCursor,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if(!fetchMoreResult) return prev
+          return { tasks: { ...fetchMoreResult.tasks, edges: [ ...prev.tasks.edges, ...fetchMoreResult.tasks.edges ] } }
+        }
+      })
     }
   }
+
   return {
     tasks: tasks.nodes.sort((a, b) => a.state - b.state),
     // count: tasks.count,
@@ -58,7 +62,7 @@ const Tasks = () => {
     setCreatedOrAssigned,
     page,
     setPage,
-    onSetCursor
+    onFetchMore
   }
 }
 

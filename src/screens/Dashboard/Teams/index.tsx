@@ -8,32 +8,34 @@ import getNodes from '../../../utils/getNodes'
 const Teams = () => {
   const user = useContext(UserContext)
   const [orderBy, setOrderBy ] = useState('createdAt_DESC')
-  const [ quantity, setQuantity ] = useState(3)
-  const [ cursor, setCursor ] = useState({after: null, before: null})
+  const [ quantity, setQuantity ] = useState(6)
   const [ nameFilter, setNameFilter ] = useState('')
-  const { data, loading, error, variables } = useQuery(TEAMS, {
+  const { data, loading, error, variables, fetchMore } = useQuery(TEAMS, {
     variables: {
       nameFilter,
-      ...cursor,
       first: quantity,
       orderBy
       // last: quantity
     }
   })
-
   const teams = useMemo(() => {
     return getNodes(data)
   }, [data])
   const pageInfo = useMemo(() => {
     return teams.pageInfo
   }, [teams])
-
-  const onSetCursor = async (action) => {
-    if(action === 'BEFORE' && pageInfo.hasPreviousPage) {
-      setCursor({ before: pageInfo.startCursor, after: null})
-    }
-    if(action === 'AFTER' && pageInfo.hasNextPage) {
-      setCursor({ before: null, after: pageInfo.endCursor })
+  const onFetchMore = async () => {
+    if(pageInfo.hasNextPage) {
+      await fetchMore({
+        variables: {
+          ...variables,
+          after: pageInfo.endCursor,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if(!fetchMoreResult) return prev
+          return { teams: { ...fetchMoreResult.teams, edges: [ ...prev.teams.edges, ...fetchMoreResult.teams.edges ] } }
+        }
+      })
     }
   }
   return({
@@ -41,7 +43,7 @@ const Teams = () => {
     loading,
     nameFilter,
     setNameFilter,
-    onSetCursor,
+    onFetchMore,
     pageInfo,
     variables
   })
