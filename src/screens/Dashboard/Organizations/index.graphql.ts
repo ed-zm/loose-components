@@ -31,6 +31,7 @@ export const ORGANIZATIONS = gql`
       #  count
       # }
       edges {
+        # cursor
         node {
           id
           name
@@ -46,33 +47,6 @@ export const ORGANIZATIONS = gql`
             id
           }
         }
-      }
-    }
-  }
-`
-
-export const CREATE_ORGANIZATION = gql`
-  mutation($name: String!, $userId: ID!) {
-    createOrganization(data: {
-      name: $name,
-      owner: {
-        connect: {
-          id: $userId
-        }
-      }
-    }) {
-      id
-      name
-      users {
-        id
-        firstName
-        avatar
-      }
-      teams {
-        id
-      }
-      owner {
-        id
       }
     }
   }
