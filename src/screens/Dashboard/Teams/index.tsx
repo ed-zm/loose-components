@@ -15,7 +15,6 @@ const Teams = () => {
       nameFilter,
       first: quantity,
       orderBy
-      // last: quantity
     }
   })
   const teams = useMemo(() => {
@@ -45,7 +44,9 @@ const Teams = () => {
     setNameFilter,
     onFetchMore,
     pageInfo,
-    variables
+    variables,
+    orderBy,
+    setOrderBy
   })
 }
 

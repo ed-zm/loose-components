@@ -7,12 +7,20 @@ import getNodes from '../../../utils/getNodes'
 const Organizations = () => {
   const user = useContext(UserContext)
   const [ quantity, setQuantity ] = useState(2)
+  const [orderBy, setOrderBy ] = useState('createdAt_DESC')
   const [ nameFilter, setNameFilter ] = useState('')
+  const [ ownerOrMember, setOwnerOrMember ] = useState('')
+  console.log(ownerOrMember)
+  const where = {
+    name_contains: nameFilter
+  }
+  if(ownerOrMember === 'MEMBER') where.users_some = { id: user.id }
+  if(ownerOrMember === 'OWNER') where.owner = { id: user.id }
   const { data, loading, error, variables, fetchMore } = useQuery(ORGANIZATIONS, {
     variables: {
-      nameFilter,
+      where,
       first: quantity,
-      // last: quantity
+      orderBy
     }
   })
   const onFetchMore = async () => {
@@ -42,7 +50,11 @@ const Organizations = () => {
     onFetchMore,
     loading,
     pageInfo,
-    variables
+    variables,
+    ownerOrMember,
+    setOwnerOrMember,
+    orderBy,
+    setOrderBy
   }
 }
 

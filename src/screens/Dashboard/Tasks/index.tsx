@@ -13,12 +13,15 @@ const Tasks = () => {
   const [ state, setState ] = useState(0)
   const [ organizationOrPersonal, setOrganizationOrPersonal ] = useState('')
   const [ createdOrAssigned, setCreatedOrAssigned ] = useState('')
+  const where = {
+    state,
+    title_contains: titleFilter
+  }
+  if(createdOrAssigned === 'CREATED') where.createdBy = { id: user.id }
+  if(createdOrAssigned === 'ASSIGNED') where.assignedTo = { id: user.id }
   const { data, loading, refetch, error, variables, fetchMore } = useQuery(TASKS, {
     variables: {
-      state: state === 2 ? null : state,
-      createdBy: createdOrAssigned === 'CREATED' ? user.id : null,
-      assignedTo: createdOrAssigned === 'ASSIGNED' ? user.id : null,
-      titleFilter,
+      where,
       first: quantity,
       orderBy
     },
@@ -62,7 +65,9 @@ const Tasks = () => {
     setCreatedOrAssigned,
     page,
     setPage,
-    onFetchMore
+    onFetchMore,
+    orderBy,
+    setOrderBy
   }
 }
 

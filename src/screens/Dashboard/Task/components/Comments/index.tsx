@@ -1,15 +1,24 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useMemo } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import moment from 'moment'
 import { UserContext } from '../../../../../contexts/User'
 import { COMMENTS, CREATE_COMMENT } from './index.graphql'
+import getNodes from '../../../../../utils/getNodes'
 
 
 const Comments = ({ task }) => {
   const user = useContext(UserContext)
   const [ comment, setComment ] = useState('')
   const [ mentions, setMentions ] = useState([])
-  const { data } = useQuery(COMMENTS, { variables: { taskId: task.id } })
+  const [orderBy, setOrderBy ] = useState('createdAt_ASC')
+  const [ quantity, setQuantity ] = useState(6)
+  const { data, loading, variables, fetchMore } = useQuery(COMMENTS, {
+    variables: {
+      taskId: task.id,
+      first: quantity,
+      orderBy
+    }
+  })
   const [ createComment, { loading: creatingComment }] = useMutation(CREATE_COMMENT)
   const onCreateComment = async () => {
     await createComment({
@@ -65,14 +74,37 @@ const Comments = ({ task }) => {
     })
     await setComment('')
   }
+  const comments = useMemo(() => {
+    return getNodes(data)
+  }, [data])
+  const pageInfo = useMemo(() => {
+    return comments.pageInfo
+  }, [comments])
+  const onFetchMore = async () => {
+    if(pageInfo.hasNextPage) {
+      await fetchMore({
+        variables: {
+          ...variables,
+          after: pageInfo.endCursor,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if(!fetchMoreResult) return prev
+          return { comments: { ...fetchMoreResult.comments, edges: [ ...prev.comments.edges, ...fetchMoreResult.comments.edges ] } }
+        }
+      })
+    }
+  }
   return({
-    data,
+    comments: comments.nodes,
+    pageInfo,
     comment,
     setComment,
     mentions,
     setMentions,
     creatingComment,
-    onCreateComment
+    onCreateComment,
+    loading,
+    onFetchMore
   })
 }
 

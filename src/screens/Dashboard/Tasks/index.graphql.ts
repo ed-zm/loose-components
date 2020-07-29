@@ -2,10 +2,7 @@ import gql from 'graphql-tag'
 
 export const TASKS = gql`
   query(
-    $state: Int,
-    $createdBy: ID,
-    $assignedTo: ID,
-    $titleFilter: String,
+    $where: TaskWhereInput,
     $orderBy: TaskOrderByInput,
     $first: Int,
     $last: Int,
@@ -13,18 +10,7 @@ export const TASKS = gql`
     $before: String,
     $after: String
   ) {
-    tasks(where: {
-      state: $state,
-      title_contains: $titleFilter,
-      OR: [
-        {assignedTo: {
-          id: $assignedTo
-        }},
-        {createdBy: {
-          id: $createdBy
-        }}
-      ]
-    },
+    tasks(where: $where,
     first: $first,
     last: $last,
     skip: $skip,

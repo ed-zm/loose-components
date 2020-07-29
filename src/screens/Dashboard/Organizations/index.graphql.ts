@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const ORGANIZATIONS = gql`
   query(
-    $nameFilter: String,
+    $where: OrganizationWhereInput
     $orderBy: OrganizationOrderByInput,
     $first: Int,
     $last: Int,
@@ -11,9 +11,7 @@ export const ORGANIZATIONS = gql`
     $after: String
   ) {
     organizations(
-      where: {
-        name_contains: $nameFilter
-      },
+      where: $where,
       first: $first,
       last: $last,
       skip: $skip,
