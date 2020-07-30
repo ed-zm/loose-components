@@ -23,10 +23,10 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
       createdBy: { connect: { id: user.id } },
     }
     if(organization) createVariables.organization = { connect: { id: organization }}
-    if(team) createVariables.team = { connect: { id: team }}
     else {
       createVariables.assignedTo = { connect : { id: user.id } }
     }
+    if(team) createVariables.team = { connect: { id: team }}
     await createTask({
       variables: { data: createVariables },
       optimisticResponse: {
