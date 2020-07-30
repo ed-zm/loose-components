@@ -1,17 +1,5 @@
 import gql from 'graphql-tag'
 
-export const USERS = gql`
-  query($assignedToId: ID) {
-    users(where: {
-      id_not: $assignedToId
-    }) {
-      id
-      firstName
-      lastName
-    }
-  }
-`
-
 export const ASSIGN_TASK = gql`
   mutation assignTask($id: ID!, $userId: ID!) {
     updateTask(

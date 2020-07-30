@@ -21,7 +21,7 @@ const Organization = ({ id }) => {
   const { data, loading, error } = useQuery(ORGANIZATION, { variables: { id, userId: user.id } })
   const [ deleteOrganization, { loading: deletingOrganization, error: deleteOrganizationError } ] = useMutation(DELETE_ORGANIZATION)
   const [ githubLogin, { data: github }] = useMutation(GITHUB_LOGIN)
-  const [ inviteToOrganization, { error: err} ] = useMutation(INVITE_TO_ORGANIZATION)
+  const [ inviteToOrganization, { error: err, loading: invitingToOrganization } ] = useMutation(INVITE_TO_ORGANIZATION)
   const [ unlinkOrganization ] = useMutation(UNLINK_ORGANIZATION)
   const [
     fetchRepositories,
@@ -162,7 +162,8 @@ const Organization = ({ id }) => {
     tab,
     setTab,
     onUnlinkOrganization,
-    onInviteToOrganization
+    onInviteToOrganization,
+    invitingToOrganization
   }
 }
 

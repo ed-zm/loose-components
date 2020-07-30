@@ -182,12 +182,6 @@ export const TEAM_MEMBERS = gql`
           id
           firstName
           lastName
-          teams {
-            id
-            users {
-              id
-            }
-          }
         }
       }
     }
