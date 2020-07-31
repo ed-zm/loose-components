@@ -1,7 +1,7 @@
 import React, { useState, useContext, useMemo } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_ORGANIZATION } from './index.graphql'
-import { ORGANIZATIONS } from '../../../screens/Dashboard/Organizations/index.graphql'
+import { ORGANIZATIONS } from '../../Lists/Organizations/index.graphql'
 import { UserContext } from '../../../contexts/User'
 
 const CreateOrganization = ({ variables }) => {

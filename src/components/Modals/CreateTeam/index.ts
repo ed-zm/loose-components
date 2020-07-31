@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_TEAM, ORGANIZATIONS } from './index.graphql'
-import { TEAMS } from '../../../screens/Dashboard/Teams/index.graphql'
+import { TEAMS } from '../../Lists/Teams/index.graphql'
 import { UserContext } from '../../../contexts/User'
 import getNodes from '../../../utils/getNodes'
 
