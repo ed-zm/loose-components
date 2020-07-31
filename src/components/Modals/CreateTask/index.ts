@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useEffect, useMemo, useContext } from 'react'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_TASK, ORGANIZATIONS, TEAMS } from './index.graphql'
-import { TASKS } from '../../../screens/Dashboard/Tasks/index.graphql'
+import { TASKS } from '../../Lists/Tasks/index.graphql'
 import { UserContext } from '../../../contexts/User'
 
 const CreateTask = ({ tasks, variables, callback = () => {} }) => {

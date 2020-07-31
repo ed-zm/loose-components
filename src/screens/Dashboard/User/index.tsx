@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react'
 import axios from 'axios'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
-import { USER, GET_S3_SIGNED_URL, CHANGE_PICTURE, USER_TEAMS, UPDATE_PROFILE } from './index.graphql'
+import { USER, GET_S3_SIGNED_URL, CHANGE_PICTURE, UPDATE_PROFILE } from './index.graphql'
 import { UIContext } from '../../../contexts/UI'
 import { UserContext } from '../../../contexts/User'
 
@@ -9,7 +9,7 @@ const User = ({id }) => {
   const currentUser = useContext(UserContext)
   const isYou = currentUser.id === id
   const ui = useContext(UIContext);
-  const [tab, setTab] = useState("TEAMS");
+  const [tab, setTab] = useState("TASKS");
   const [ picture, setPicture ] = useState({
     currentPicture: null,
     fileType: 'image/jpg',
@@ -20,7 +20,6 @@ const User = ({id }) => {
   const { currentPicture, fileType } = picture
   const { data, loading: userLoading } = useQuery(USER, { variables: { id } })
   const [ getS3SignedUrl, { data: s3Url, error, loading }] = useLazyQuery(GET_S3_SIGNED_URL)
-  const [ fetchTeams, { data: teamsData, error: teamsError, loading: loadingTeams }] = useLazyQuery(USER_TEAMS)
   const [ changePicture ] = useMutation(CHANGE_PICTURE)
   const [ updateProfile, { loading: updatingProfile } ] = useMutation(UPDATE_PROFILE)
   const onUpdateProfile = async () => {
@@ -104,10 +103,6 @@ const User = ({id }) => {
     return null
   }, [data])
 
-  const teams = useMemo(() => {
-    if(teamsData && teamsData.teams) return teamsData.teams
-    return []
-  }, [teamsData])
   useEffect(() => {
     if(user) {setBio(user.biography)}
   }, [user])
@@ -117,9 +112,6 @@ const User = ({id }) => {
     user,
     loading,
     error,
-    loadingTeams,
-    teamsError,
-    teams,
     currentPicture,
     fileType,
     closeCropper,
