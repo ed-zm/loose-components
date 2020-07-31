@@ -69,11 +69,6 @@ const User = ({id }) => {
     }
   }, [s3Url])
   useEffect(() => {
-    if(user) {
-      fetchTeams({ variables: { userId: data.user.id }})
-    }
-  }, [tab])
-  useEffect(() => {
     ui.actions.loading(userLoading)
   }, [userLoading])
   const changeProfilePicture = async picture => {
