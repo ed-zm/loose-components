@@ -5,7 +5,7 @@ import { USERS } from './index.graphql'
 import { UserContext } from '../../../contexts/User'
 import getNodes from '../../../utils/getNodes'
 
-const Users = ({ team, organization, type, typeId }) => {
+const Users = ({ team, organization, type, typeId, invite }) => {
   const user = useContext(UserContext)
   const [ name, setName ] = useState('')
   const [ now ] = useState(moment())
@@ -18,7 +18,8 @@ const Users = ({ team, organization, type, typeId }) => {
   }
   if(organization) where.organizations_some = { id: organization.id }
   if(team) where.teams_some = { id: team.id }
-  if(type && typeId) {
+  if(invite && type && typeId) {
+    where.id_not = user.id
     where.receivedInvites_none = {
       typeId,
       type,
@@ -26,10 +27,13 @@ const Users = ({ team, organization, type, typeId }) => {
         id: user.id
       }
     }
-    where.id_not = user.id
     where.receivedInvites_every = {
       expireAt_lt: now
     }
+
+    // set filters as null as we are joining new users instead of filtering
+    delete where.organizations_some
+    delete where.teams_some
   }
   const { data, error, refetch, loading } = useQuery(USERS, {
     variables: {

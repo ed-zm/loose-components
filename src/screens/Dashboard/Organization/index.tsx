@@ -110,30 +110,41 @@ const Organization = ({ id }) => {
       }
     })
   }
-  const onInviteToOrganization = async (id) => {
-    await inviteToOrganization({
-      variables: {
-        userId: user.id,
-        to: id,
-        typeId: organization.id
-      },
-      // optimisticResponse: {
-      //   __typename: 'Mutation',
-      //   inviteToOrganization: {
-      //     __typename: "Invite",
-      //     id: -1,
-      //     to: {
-      //       __typename: "User",
-      //       id
-      //     },
-      //     from: {
-      //       __typename: "User",
-      //       id: user.id
-      //     }
-      //   }
-      // },
-      // update: (proxy, { data: { inviteToOrganization } })
-    })
+  const onInviteToOrganization = async ({ id, email }) => {
+    if(id) {
+      await inviteToOrganization({
+        variables: {
+          userId: user.id,
+          to: id,
+          typeId: organization.id
+        },
+        // optimisticResponse: {
+        //   __typename: 'Mutation',
+        //   inviteToOrganization: {
+        //     __typename: "Invite",
+        //     id: -1,
+        //     to: {
+        //       __typename: "User",
+        //       id
+        //     },
+        //     from: {
+        //       __typename: "User",
+        //       id: user.id
+        //     }
+        //   }
+        // },
+        // update: (proxy, { data: { inviteToOrganization } })
+      })
+    }
+    if(email) {
+      await inviteToOrganization({
+        variables: {
+          userId: user.id,
+          email,
+          typeId: organization.id
+        }
+      })
+    }
   }
   const projects = useMemo(() => {
     if(projectsData && projectsData.githubProjects) return projectsData.githubProjects

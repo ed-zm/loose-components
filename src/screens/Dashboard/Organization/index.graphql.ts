@@ -78,10 +78,11 @@ export const UNLINK_ORGANIZATION = gql`
 `
 
 export const INVITE_TO_ORGANIZATION = gql`
-  mutation inviteToOrganization($to: ID!, $userId: ID!, $typeId: ID!) {
+  mutation inviteToOrganization($to: ID, $email: String, $userId: ID!, $typeId: ID!) {
     inviteToOrganization(data: {
       type: ORGANIZATION,
       typeId: $typeId,
+      email: $email,
       code: "1",
       to: {
         connect: {
