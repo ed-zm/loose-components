@@ -154,7 +154,6 @@ const Organization = ({ id }) => {
     if(repositoriesData && repositoriesData.githubRepositories) return repositoriesData.githubRepositories
     return []
   }, [repositoriesData])
-  console.log('ERR', err)
   return {
     organization,
     loading,
