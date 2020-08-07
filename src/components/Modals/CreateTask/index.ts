@@ -23,7 +23,7 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
       estimated,
       createdBy: { connect: { id: user.id } },
     }
-    if(!!assignedTo && !teamTask) createVariables.assignedTo = { connect : { id: assignTo.id } }
+    if(!!assignTo && !teamTask) createVariables.assignedTo = { connect : { id: assignTo.id } }
     if(organization) createVariables.organization = { connect: { id: organization }}
     else {
       createVariables.assignedTo = { connect : { id: user.id } }
