@@ -31,7 +31,6 @@ const CreateTeam = ({ variables }) => {
         //@ts-ignore
         const newTeams = data.teams.edges.slice()
         newTeams.unshift({ node: createTeam, __typename: "TeamEdge" })
-        newTeams.pop()
         proxy.writeQuery({ query: TEAMS, variables, data: { teams: { ...data.teams, edges: newTeams} } })
       }
     })

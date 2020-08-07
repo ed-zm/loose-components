@@ -32,7 +32,6 @@ const CreateOrganization = ({ variables }) => {
       // @ts-ignore
       const newOrganizations = data.organizations.edges.slice()
       newOrganizations.unshift({ node: createOrganization, __typename: "OrganizationEdge" })
-      newOrganizations.pop()
       proxy.writeQuery({ query: ORGANIZATIONS, variables, data: { organizations: { ...data.organizations, edges: newOrganizations} }})
     }
   })

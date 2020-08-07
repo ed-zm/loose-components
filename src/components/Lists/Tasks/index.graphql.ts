@@ -41,6 +41,12 @@ export const TASKS = gql`
             lastName
             avatar
           }
+          assignedTo {
+            id
+            firstName
+            lastName
+            avatar
+          }
           organization {
             id
           }

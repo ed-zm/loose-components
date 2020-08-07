@@ -15,6 +15,12 @@ export const CREATE_TASK = gql`
         lastName
         avatar
       }
+      assignedTo {
+        id
+        firstName
+        lastName
+        avatar
+      }
       organization {
         id
       }

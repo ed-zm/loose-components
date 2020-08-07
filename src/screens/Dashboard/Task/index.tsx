@@ -40,7 +40,6 @@ const Task = ({ id }) => {
       setIsMember(true)
     }
   }, [task])
-  console.log(task, isMember)
   return({
     task,
     loading,

@@ -14,14 +14,16 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
   const [ team, setTeam ] = useState('')
   const [ estimated, setEstimated ] = useState(0)
   const [ teamTask, setTeamTask ] = useState(false)
+  const [ assignTo, setAssignTo ] = useState(null)
   const onCreateTask = async () => {
     const createVariables: CreateTaskVariables = {
-      title,
+      title: title.toLowerCase(),
       description,
       state: 0,
       estimated,
       createdBy: { connect: { id: user.id } },
     }
+    if(!!assignedTo && !teamTask) createVariables.assignedTo = { connect : { id: assignTo.id } }
     if(organization) createVariables.organization = { connect: { id: organization }}
     else {
       createVariables.assignedTo = { connect : { id: user.id } }
@@ -34,7 +36,7 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
         createTask: {
           __typename: "Task",
           id: "-1",
-          title,
+          title: title.toLowerCase(),
           state: 0,
           estimated,
           code: 'AAAA',
@@ -59,11 +61,8 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
       },
       update: (proxy, { data: { createTask }}) => {
         const data = proxy.readQuery({ query: TASKS, variables })
-        //@ts-ignore
-        // debugger
         const newTasks = data.tasks.edges.slice()
         newTasks.unshift({ node: createTask, __typename: "TaskEdge" })
-        newTasks.pop()
         proxy.writeQuery({ query: TASKS, variables, data: { tasks: { ...data.tasks, edges: newTasks } } })
       }
     })
@@ -108,7 +107,9 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
     setTeamTask,
     organization,
     setOrganization,
-    creatingTask
+    creatingTask,
+    setAssignTo,
+    assignTo
   }
 }
 

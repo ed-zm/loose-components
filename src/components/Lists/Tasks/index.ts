@@ -8,9 +8,8 @@ const Tasks = ({ team, organization }) => {
   const user = useContext(UserContext)
   const [orderBy, setOrderBy ] = useState('createdAt_DESC')
   const [ quantity, setQuantity ] = useState(6)
-  const [ page, setPage ] = useState(1)
   const [ titleFilter, setTitleFilter ] = useState('')
-  const [ state, setState ] = useState(0)
+  const [ state, setState ] = useState(2)
   const [ organizationOrPersonal, setOrganizationOrPersonal ] = useState('')
   const [ createdOrAssigned, setCreatedOrAssigned ] = useState('')
   const where = {
@@ -21,13 +20,16 @@ const Tasks = ({ team, organization }) => {
   if(createdOrAssigned === 'ASSIGNED') where.assignedTo = { id: user.id }
   if(team) where.team = { id: team.id }
   if(organization) where.organization = { id: organization.id }
+  if(state > 1) {
+    delete where.state
+  }
   const { data, loading, refetch, error, variables, fetchMore } = useQuery(TASKS, {
     variables: {
       where,
       first: quantity,
       orderBy
     },
-    fetchPolicy: 'only-network'
+    // fetchPolicy: 'cache-and-network'
   })
   const pageInfo = useMemo(() => {
     return getNodes(data).pageInfo
@@ -65,8 +67,6 @@ const Tasks = ({ team, organization }) => {
     setOrganizationOrPersonal,
     createdOrAssigned,
     setCreatedOrAssigned,
-    page,
-    setPage,
     onFetchMore,
     orderBy,
     setOrderBy

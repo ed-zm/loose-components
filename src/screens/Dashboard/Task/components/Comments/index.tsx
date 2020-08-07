@@ -66,10 +66,11 @@ const Comments = ({ task }) => {
         }
       },
       update: (proxy, { data: { updateTask } }) => {
-        const proxyData: any = proxy.readQuery({ query: COMMENTS, variables: { taskId: task.id } })
-        const newComments = proxyData.comments.slice()
-        newComments.push(updateTask.comments[updateTask.comments.length - 1])
-        proxy.writeQuery({ query: COMMENTS, variables: { taskId: task.id }, data: { comments: newComments } })
+        const data: any = proxy.readQuery({ query: COMMENTS, variables })
+        const newComments = data.comments.edges.slice()
+        newComments.push({ node: updateTask.comments[updateTask.comments.length - 1], __typename: "CommentEdge" })
+        // newComments.push(updateTask.comments[updateTask.comments.length - 1])
+        proxy.writeQuery({ query: COMMENTS, variables, data: { comments: { ...data.comments, edges: newComments }} })
       }
     })
     await setComment('')
