@@ -29,7 +29,7 @@ const Tasks = ({ team, organization }) => {
       first: quantity,
       orderBy
     },
-    // fetchPolicy: 'cache-and-network'
+    fetchPolicy: 'network-only'
   })
   const pageInfo = useMemo(() => {
     return getNodes(data).pageInfo
