@@ -13,6 +13,8 @@ export const TASK = gql`
         id
         firstName
         lastName
+        username
+        avatar
       }
       labels {
         id
@@ -23,6 +25,8 @@ export const TASK = gql`
         id
         firstName
         lastName
+        username
+        avatar
       }
       organization {
         id

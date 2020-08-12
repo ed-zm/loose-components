@@ -46,8 +46,17 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
             id: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
-            avatar: user.avatar
+            avatar: user.avatar,
+            username: user.username
           },
+          assignedTo: assignTo ?{
+            __typename: "User",
+            id: assignTo.id,
+            firstName: assignTo.firstName,
+            lastName: assignTo.lastName,
+            username: assignTo.username,
+            avatar: assignTo.avatar
+          } : null,
           organization: !organization ? null : {
             __typename: "Organization",
             id: organization

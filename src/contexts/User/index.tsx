@@ -9,7 +9,19 @@ export interface UserContextType {
   firstName: string;
   lastName: string;
   actions: {
-    setUser({ sessionId, accessLevels }: { sessionId: string; accessLevels: [] }): void;
+    setUser(
+      { id,
+        username,
+        firstName,
+        lastName,
+        avatar
+      }: {
+        id: string;
+        username: sting;
+        firstName: string;
+        lastName: string;
+        avatar: string;
+      }): void;
     logout(): void;
   };
 }
@@ -19,6 +31,7 @@ const initialState: UserContextType = {
   username: "",
   firstName: "",
   lastName: "",
+  avatar: "",
   actions: {
     setUser: () => null,
     logout: () => null
@@ -29,6 +42,7 @@ export const UserContext = createContext<UserContextType>(initialState);
 
 export const UserProvider = ({ children, user }) => {
   const [state, dispatch] = useReducer(rootReducer, { ...initialState, ...user });
+  // console.log('STATE', state, user)
   const actions = actionsCreator(actionsForm, dispatch);
   return <UserContext.Provider value={{ ...state, actions }}>{children}</UserContext.Provider>;
 };

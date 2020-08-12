@@ -9,9 +9,11 @@ export default (state, action) => {
       };
     case actions.LOGOUT:
       return {
-        sessionId: null,
-        timezone: null,
-        language: null
+        id: "",
+        username: "",
+        firstName: "",
+        lastName: "",
+        avatar: "",
       };
     default:
       return state;
