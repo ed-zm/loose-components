@@ -6,18 +6,28 @@ import { UserContext } from '../../../contexts/User'
 const UpdateTask = ({ task, callback = () => {} }) => {
   const user = useContext(UserContext)
   const [ updateTask, { loading: updatingTask } ] = useMutation(UPDATE_TASK)
+  const [ organization, setOrganization ] = useState(task.organization ? task.organization.id : '')
   const [ title, setTitle ] = useState(task.title)
   const [ description, setDescription ] = useState(task.description)
   const [ estimated, setEstimated ] = useState(task.estimated)
   const onUpdateTask = async () => {
-    const variables: UpdateTaskVariables = {
-      taskId: task.id,
+    const where = {
+      id: task.id
+    }
+    const data = {
       title,
       description,
-      estimated
+      estimated,
+      organization: {
+        disconnect: true
+      }
     }
+    if(organization) data.organization = { connect: { id: organization } }
     await updateTask({
-      variables,
+      variables: {
+        where,
+        data
+      },
       optimisticResponse: {
         __typename: "Mutation",
         updateTask: {
@@ -44,7 +54,9 @@ const UpdateTask = ({ task, callback = () => {} }) => {
     setEstimated,
     description,
     setDescription,
-    updatingTask
+    updatingTask,
+    organization,
+    setOrganization
   }
 }
 

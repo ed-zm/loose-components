@@ -1,19 +1,16 @@
 import gql from 'graphql-tag'
 
 export const UPDATE_TASK = gql`
-  mutation($taskId: ID!, $title: String, $description: String, $estimated: Int) {
+  mutation($where: TaskWhereUniqueInput!, $data: TaskUpdateInput) {
     updateTask(
-      where: {
-        id: $taskId
-      },
-      data: {
-        title: $title,
-        description: $description,
-        estimated: $estimated
-      }
+      where: $where
+      data: $data
     ) {
       id
       title
+      organization {
+        id
+      }
       description
       estimated
       updatedAt

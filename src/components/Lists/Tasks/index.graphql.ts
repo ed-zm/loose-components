@@ -95,6 +95,10 @@ export const RESPONSE_REQUESTS = gql`
           id
           title
           description
+          task {
+            id
+            code
+          }
           createdBy {
             id
             firstName
