@@ -19,6 +19,7 @@ const Comments = ({ task }) => {
       orderBy
     }
   })
+  console.log('CREATE', mentions.map(value => value.split('@')[1]))
   const [ createComment, { loading: creatingComment }] = useMutation(CREATE_COMMENT)
   const onCreateComment = async () => {
     await createComment({
@@ -28,18 +29,20 @@ const Comments = ({ task }) => {
         text: comment,
         mentions: mentions.map(value => {
           const mention = value.split('@')[1]
-          const title = `respond to ${mention} in ${task.code}`
+          const title = `respond to ${user.firstName} ${user.lastName} in ${task.code}`
           return {
             title,
             description: `Response Request in ${title} from ${mention}`,
             createdBy: {
               connect: { id: user.id }
             },
+            state: 0,
             assignedTo: {
               connect: { username: mention }
             }
           }
         })
+
       },
       optimisticResponse: {
         __typename: "Mutation",
@@ -50,6 +53,7 @@ const Comments = ({ task }) => {
             __typename: "Comment",
             id: -1,
             text: comment,
+            state: 0,
             task: {
               __typename: "Task",
               id: task.id

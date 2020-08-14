@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { TASKS, ORGANIZATIONS } from './index.graphql'
+import { TASKS, ORGANIZATIONS, RESPONSE_REQUESTS } from './index.graphql'
 import { UserContext } from '../../../contexts/User'
 import getNodes from '../../../utils/getNodes'
 
@@ -31,18 +31,46 @@ const Tasks = ({ team, organization }) => {
     },
     fetchPolicy: 'network-only'
   })
-  const pageInfo = useMemo(() => {
+  const {
+    data: responseRequestsData,
+    loading: responseRequestsLoading,
+    refetch: responseRequestsRefetch,
+    error: responseRequestsError,
+    variables: responseRequestsVariables,
+    fetchMore: responseRequestsFetchMore } = useQuery(RESPONSE_REQUESTS, {
+    variables: {
+      // where,
+      first: quantity,
+      orderBy
+    },
+    fetchPolicy: 'network-only'
+  })
+
+  const responseRequestsPageInfo = useMemo(() => {
+    return getNodes(responseRequestsData).pageInfo
+  }, [responseRequestsData])
+  const tasksPageInfo = useMemo(() => {
     return getNodes(data).pageInfo
   }, [data])
+  const pageInfo = useMemo(() => {
+    return {
+      hasNextPage: tasksPageInfo.hasNextPage || responseRequestsPageInfo.hasNextPage,
+      hasPreviousPage: tasksPageInfo.hasPreviousPage || responseRequestsPageInfo.hasPreviousPage
+    }
+  }, [responseRequestsPageInfo, tasksPageInfo])
+
   const tasks = useMemo(() => {
     return getNodes(data)
   }, [data])
+  const responseRequests = useMemo(() => {
+    return getNodes(responseRequestsData)
+  }, [responseRequestsData])
   const onFetchMore = async () => {
-    if(pageInfo.hasNextPage) {
+    if(tasksPageInfo.hasNextPage) {
       await fetchMore({
         variables: {
           ...variables,
-          after: pageInfo.endCursor,
+          after: tasksPageInfo.endCursor,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if(!fetchMoreResult) return prev
@@ -50,14 +78,28 @@ const Tasks = ({ team, organization }) => {
         }
       })
     }
+    if(responseRequestsPageInfo.hasNextPage) {
+      await responseRequestsFetchMore({
+        variables: {
+          ...variables,
+          after: responseRequestsPageInfo.endCursor,
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if(!fetchMoreResult) return prev
+          return { responseRequests: { ...fetchMoreResult.responseRequests, edges: [ ...prev.responseRequests.edges, ...fetchMoreResult.responseRequests.edges ] } }
+        }
+      })
+    }
   }
-
+  const items = [...responseRequests.nodes, ...tasks.nodes]
+  console.log('RESPONSE REQUESTS', responseRequests)
+  console.log('TASKS', tasks)
   return {
-    tasks: tasks.nodes.sort((a, b) => a.state - b.state),
+    tasks: items.sort((a, b) => a.state - b.state),
     // count: tasks.count,
     pageInfo,
     variables,
-    loading,
+    loading: loading || responseRequestsLoading,
     error,
     state,
     setState,
