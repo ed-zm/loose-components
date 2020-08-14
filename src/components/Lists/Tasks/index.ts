@@ -92,8 +92,6 @@ const Tasks = ({ team, organization }) => {
     }
   }
   const items = [...responseRequests.nodes, ...tasks.nodes]
-  console.log('RESPONSE REQUESTS', responseRequests)
-  console.log('TASKS', tasks)
   return {
     tasks: items.sort((a, b) => a.state - b.state),
     // count: tasks.count,

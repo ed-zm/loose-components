@@ -42,7 +42,6 @@ export const UserContext = createContext<UserContextType>(initialState);
 
 export const UserProvider = ({ children, user }) => {
   const [state, dispatch] = useReducer(rootReducer, { ...initialState, ...user });
-  // console.log('STATE', state, user)
   const actions = actionsCreator(actionsForm, dispatch);
   return <UserContext.Provider value={{ ...state, actions }}>{children}</UserContext.Provider>;
 };

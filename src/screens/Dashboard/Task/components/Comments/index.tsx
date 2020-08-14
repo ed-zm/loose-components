@@ -19,7 +19,6 @@ const Comments = ({ task }) => {
       orderBy
     }
   })
-  console.log('CREATE', mentions.map(value => value.split('@')[1]))
   const [ createComment, { loading: creatingComment }] = useMutation(CREATE_COMMENT)
   const onCreateComment = async () => {
     await createComment({

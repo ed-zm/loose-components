@@ -39,7 +39,6 @@ const CreateTeam = ({ variables }) => {
     return getNodes(orgs)
   }, [orgs])
   useEffect(() => {
-    console.log('USE EFFECT',organizations)
     if(!!organizations.nodes.length) {
       setOrganization(organizations.nodes[0].id)
     }

@@ -13,7 +13,6 @@ const Comment = ({ task, id, text }) => {
   const [ edit, setEdit ] = useState(false)
   const [ updateComment, { loading: updatingComment }] = useMutation(UPDATE_COMMENT)
   const [ deleteComment, { loading: deletingComment }] = useMutation(DELETE_COMMENT)
-  console.log(mentions)
   const onUpdateComment = async () => {
     await updateComment({
       variables: {

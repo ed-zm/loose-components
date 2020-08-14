@@ -8,7 +8,6 @@ const Search = ({ type, typeId }) => {
   const user = useContext(UserContext)
   const [ hint, setHint ] = useState('')
   const [ userSearch, { data, loading: searchingUsers, refetch } ] = useLazyQuery(USERS_SEARCH)
-  console.log(type, hint,typeId, user.id, moment().toISOString())
   useEffect(() => {
     if(hint.length > 2) {
       userSearch({

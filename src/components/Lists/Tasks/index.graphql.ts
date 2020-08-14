@@ -72,7 +72,7 @@ export const RESPONSE_REQUESTS = gql`
     $before: String,
     $after: String
   ) {
-    responseRequestsConnection(
+    responseRequests(
       #where: $where,
       first: $first,
       last: $last,
