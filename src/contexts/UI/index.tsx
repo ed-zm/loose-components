@@ -26,9 +26,9 @@ type Actions = {
 
 const initialValue = {
   loading: false,
-  width: Math.round(process.browser ? window.innerWidth : 0),
-  height: Math.round(process.browser ? window.innerHeight : 0),
-  bp: breakpoint(Math.round(process.browser ? window.innerWidth : 0)),
+  // width: Math.round(process.browser ? window.innerWidth : 0),
+  // height: Math.round(process.browser ? window.innerHeight : 0),
+  // bp: breakpoint(Math.round(process.browser ? window.innerWidth : 0)),
   actions: {
     loading: p => p,
     resize: p => p
@@ -40,20 +40,20 @@ export const UIContext = createContext(initialValue)
 export const UIProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialValue);
   const actions = actionsCreator(actionsForm, dispatch);
-  useEffect(() => {
-    const resize = () => {
-      const width = window.innerWidth
-      const height = window.innerHeight
-      const bp = breakpoint(width);
-      if (width) actions.resize({ height, width, bp });
-    };
-    //subscribe
-    window.addEventListener("resize", resize);
-    // unsubscribe
-    return () => {
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const resize = () => {
+  //     const width = window.innerWidth
+  //     const height = window.innerHeight
+  //     const bp = breakpoint(width);
+  //     if (width) actions.resize({ height, width, bp });
+  //   };
+  //   //subscribe
+  //   window.addEventListener("resize", resize);
+  //   // unsubscribe
+  //   return () => {
+  //     window.removeEventListener("resize", resize);
+  //   };
+  // }, []);
   return(
     <UIContext.Provider value={{ ...state, actions }}>
       <ModalProvider>
