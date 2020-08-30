@@ -1,6 +1,6 @@
 {
   "name": "loose-components",
-  "version": "1.0.32",
+  "version": "1.0.34",
   "description": "Reusable components for Loose App",
   "main": "index.js",
   "repository": "https://github.com/loose-dev/loose-components.git",
@@ -12,17 +12,6 @@
   },
   "peerDependencies": {
     "@apollo/react-hooks": "^3.1.4",
-    "@types/react": "^16.9.15",
-    "apollo-client": "^2.6.8",
-    "axios": "^0.19.2",
-    "graphql": "^15.0.0",
-    "graphql-tag": "^2.10.3",
-    "moment": "^2.24.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
-  },
-  "devDependencies": {
-    "@apollo/react-hooks": "^3.1.4",
     "@babel/runtime": "^7.9.2",
     "@types/react": "^16.9.15",
     "apollo-client": "^2.6.8",
@@ -30,6 +19,19 @@
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "moment": "^2.24.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "axios": "^0.19.2"
+  },
+  "devDependencies": {
+    "@apollo/react-hooks": "^3.1.4",
+    "@babel/runtime": "^7.9.2",
+    "@types/react": "^16.9.15",
+    "apollo-client": "^2.6.8",
+    "graphql": "^15.0.0",
+    "graphql-tag": "^2.10.3",
+    "moment": "^2.24.0",
+    "axios": "^0.19.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "typescript": "^3.8.3"

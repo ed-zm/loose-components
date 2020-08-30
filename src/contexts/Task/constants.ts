@@ -1,0 +1,4 @@
+export default {
+  SET_DRAFT: "TASK/SET_DRAFT",
+  CLEAR_DRAFT: "TASK/CLEAR_DRAFT"
+};

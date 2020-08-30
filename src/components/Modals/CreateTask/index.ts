@@ -3,9 +3,11 @@ import { useQuery, useLazyQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_TASK, ORGANIZATIONS, TEAMS } from './index.graphql'
 import { TASKS } from '../../Lists/Tasks/index.graphql'
 import { UserContext } from '../../../contexts/User'
+import { TaskContext } from '../../../contexts/Task'
 
 const CreateTask = ({ tasks, variables, callback = () => {} }) => {
   const user = useContext(UserContext)
+  const task = useContext(TaskContext)
   const [ createTask, { loading: creatingTask } ] = useMutation(CREATE_TASK)
   const [ fetchTeams, { loading: fetchingTeams, error: fetchTeamsError, data: fetchTeamsData }] = useLazyQuery(TEAMS)
   const [ title, setTitle ] = useState('')
@@ -15,6 +17,16 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
   const [ estimated, setEstimated ] = useState(0)
   const [ teamTask, setTeamTask ] = useState(false)
   const [ assignTo, setAssignTo ] = useState(null)
+  const useDraft = async (draft) => {
+    await setTitle(draft.title)
+    await setTeam(draft.team)
+    await setEstimated(draft.estimated)
+    await setDescription(draft.description)
+    await setTeamTask(draft.teamTask)
+    await setOrganization(draft.organization)
+    await setAssignTo(draft.assignTo)
+    task.actions.clearDraft()
+  }
   const onCreateTask = async () => {
     const createVariables: CreateTaskVariables = {
       title: title.toLowerCase(),
@@ -118,7 +130,8 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
     setOrganization,
     creatingTask,
     setAssignTo,
-    assignTo
+    assignTo,
+    useDraft
   }
 }
 
