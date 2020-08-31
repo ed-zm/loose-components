@@ -1,6 +1,6 @@
 {
   "name": "loose-components",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "Reusable components for Loose App",
   "main": "index.js",
   "repository": "https://github.com/loose-dev/loose-components.git",
