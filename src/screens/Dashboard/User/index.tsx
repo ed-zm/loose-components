@@ -46,7 +46,13 @@ const User = ({id }) => {
       const extension = picture.fileType.split('/')
       s3Key = `${data.user.id}.${extension[1]}`
       new Promise( async resolve => {
-        const res = await axios.put(s3Url.getS3SignedUrl, blob, { headers: { 'Content-Type': fileType } })
+        const res = await axios.put(s3Url.getS3SignedUrl, blob,
+          {
+            headers: {
+              'Content-Type': fileType,
+              "x-amz-acl": "public-read"
+            }
+          })
         resolve(res)
       })
       .then((res: any) => {
@@ -54,7 +60,7 @@ const User = ({id }) => {
           return changePicture({
             variables: {
               id: data.user.id,
-              avatar: `https://s3.eu-west-1.amazonaws.com/dev.loose.www.avatars/${s3Key}`
+              avatar: `https://loose.sfo2.digitaloceanspaces.com/avatars/${s3Key}`
             }
           })
         } else {
@@ -84,7 +90,8 @@ const User = ({id }) => {
       variables: {
         operation: 'putObject',
         fileType: fileType,
-        id: data.user.id
+        id: data.user.id,
+        folder: 'avatars'
       }
     })
   }

@@ -15,11 +15,12 @@ export const USER = gql`
 `
 
 export const GET_S3_SIGNED_URL = gql`
-  query getS3SignedUrl($id: ID!, $fileType: String!, $operation: String!) {
+  query getS3SignedUrl($id: ID!, $fileType: String!, $operation: String!, $folder: String) {
     getS3SignedUrl (
       fileType: $fileType,
       operation: $operation,
-      id: $id
+      id: $id,
+      folder: $folder
     )
   }
 `
