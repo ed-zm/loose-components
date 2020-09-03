@@ -99,6 +99,7 @@ export const RESPONSE_REQUESTS = gql`
             id
             code
           }
+          state
           createdBy {
             id
             firstName
