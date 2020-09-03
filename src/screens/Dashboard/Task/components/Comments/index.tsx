@@ -21,12 +21,19 @@ const Comments = ({ task }) => {
   })
   const [ createComment, { loading: creatingComment }] = useMutation(CREATE_COMMENT)
   const onCreateComment = async () => {
+    const filteredMentions = mentions.filter(mention => (task.createdBy.username !== mention) && ((task.assignedTo.username !== mention)))
+    if(user.username === task.createdBy.username) {
+      filteredMentions.push(`@${task.assignedTo.username}`)
+    }
+    if(user.username === task.assignedTo.username) {
+      filteredMentions.push(`@${task.createdBy.username}`)
+    }
     await createComment({
       variables: {
         userId: user.id,
         taskId: task.id,
         text: comment,
-        mentions: mentions.map(value => {
+        mentions: filteredMentions.map(value => {
           const mention = value.split('@')[1]
           const title = `respond to ${user.firstName} ${user.lastName} in ${task.code}`
           return {
