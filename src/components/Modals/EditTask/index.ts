@@ -15,13 +15,11 @@ const UpdateTask = ({ task, callback = () => {} }) => {
       id: task.id
     }
     const data = {
-      title,
-      description,
-      estimated,
-      organization: {
-        disconnect: true
-      }
+      title: { set: title },
+      description: { set: description },
+      estimated: { set: estimated },
     }
+    if(task.organization && !organization) data.organization = { disconnect: true }
     if(organization) data.organization = { connect: { id: organization } }
     await updateTask({
       variables: {
@@ -30,7 +28,7 @@ const UpdateTask = ({ task, callback = () => {} }) => {
       },
       optimisticResponse: {
         __typename: "Mutation",
-        updateTask: {
+        updateOneTask: {
           __typename: "Task",
           id: task.id,
           title,
@@ -45,7 +43,6 @@ const UpdateTask = ({ task, callback = () => {} }) => {
     await setEstimated(0)
     await callback()
   }
-
   return {
     onUpdateTask,
     title,

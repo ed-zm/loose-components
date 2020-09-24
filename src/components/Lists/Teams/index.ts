@@ -2,53 +2,60 @@ import React, { useState, useEffect, useContext, useMemo } from 'react'
 import Link from 'next/link'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { TEAMS, ORGANIZATIONS } from './index.graphql'
-import getNodes from '../../../utils/getNodes'
 
 const Teams = ({ organization }) => {
-  const [orderBy, setOrderBy ] = useState('createdAt_DESC')
+  const [ continueFetching, setContinueFetching ] = useState(true)
+  const [orderBy, setOrderBy ] = useState({ createdAt: 'desc' })
   const [ quantity, setQuantity ] = useState(6)
   const [ nameFilter, setNameFilter ] = useState('')
   const where = {
-    name_contains: nameFilter
+    name: {
+      contains: nameFilter
+    }
   }
-  if(organization) where.organization = { id: organization.id }
+  if(organization) where.organization = { id: { equals: organization.id } }
   const { data, loading, error, variables, fetchMore } = useQuery(TEAMS, {
     variables: {
       where,
       first: quantity,
       orderBy
-    }
+    },
+    fetchPolicy: 'network-only'
   })
   const teams = useMemo(() => {
-    return getNodes(data)
+    if(data && data.teams) return data.teams
+    return []
   }, [data])
-  const pageInfo = useMemo(() => {
-    return teams.pageInfo
-  }, [teams])
   const onFetchMore = async () => {
-    if(pageInfo.hasNextPage) {
+    const teamsLength = teams.length
+    if(continueFetching && teamsLength > 0) {
       await fetchMore({
         variables: {
           ...variables,
-          after: pageInfo.endCursor,
+          after: {
+            id: teams[teamsLength - 1].id
+          },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if(!fetchMoreResult) return prev
-          return { teams: { ...fetchMoreResult.teams, edges: [ ...prev.teams.edges, ...fetchMoreResult.teams.edges ] } }
+          if(!fetchMoreResult) {
+            setContinueFetching(false)
+            return prev
+          }
+          return { teams: [ ...prev.teams, ...fetchMoreResult.teams ] }
         }
       })
     }
   }
   return({
-    teams: teams.nodes,
+    teams,
     loading,
     nameFilter,
     setNameFilter,
     onFetchMore,
-    pageInfo,
     variables,
     orderBy,
-    setOrderBy
+    setOrderBy,
+    continueFetching
   })
 }
 

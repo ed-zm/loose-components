@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const TASK = gql`
-  query($where: TaskWhereUniqueInput!, $userId: ID!) {
+  query($where: TaskWhereUniqueInput!, $userId: String!) {
     task(where: $where) {
       id
       title
@@ -31,7 +31,7 @@ export const TASK = gql`
       organization {
         id
         users(where: {
-          id: $userId
+          id: { equals: $userId }
         }) {
           id
         }
@@ -42,8 +42,8 @@ export const TASK = gql`
 `
 
 export const DELETE_TASK = gql`
-  mutation deleteTask($id: ID!) {
-    deleteTask(
+  mutation deleteOneTask($id: String!) {
+    deleteOneTask(
       where: {
       id: $id
     }) {

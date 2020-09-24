@@ -3,37 +3,41 @@ import moment from 'moment'
 import { useQuery } from '@apollo/react-hooks'
 import { USERS } from './index.graphql'
 import { UserContext } from '../../../contexts/User'
-import getNodes from '../../../utils/getNodes'
 
 const Users = ({ team, organization, type, typeId, invite }) => {
   const user = useContext(UserContext)
+  const [ continueFetching, setContinueFetching ] = useState(true)
   const [ name, setName ] = useState('')
   const [ now ] = useState(moment())
-  const [ orderBy, setOrderBy ] = useState('firstName_ASC')
+  const [ orderBy, setOrderBy ] = useState({ firstName: 'asc' })
   const where = {
     OR: [
-      { firstName_contains: name },
-      { lastName_contains: name }
+      { firstName: { contains: name } },
+      { lastName: { contains: name } }
     ],
   }
-  if(organization) where.organizations_some = { id: organization.id }
-  if(team) where.teams_some = { id: team.id }
+  if(organization) where.organizations = { some: { id: { equals: organization.id } } }
+  if(team) where.teams = { some: { id: { equals: team.id } } }
   if(invite && type && typeId) {
-    where.id_not = user.id
-    where.receivedInvites_none = {
-      typeId,
-      type,
-      from: {
-        id: user.id
+    where.id = { not: user.id }
+    where.receivedInvites = {
+      none: {
+        typeId: { equals: typeId },
+        type: { equals: type },
+        from: {
+          id: { equals: user.id }
+        }
       }
     }
-    where.receivedInvites_every = {
-      expireAt_lt: now
+    where.receivedInvites = {
+      every: {
+        expireAt: { lt: now }
+      }
     }
 
     // set filters as null as we are joining new users instead of filtering
-    delete where.organizations_some
-    delete where.teams_some
+    delete where.organizations
+    delete where.teams
   }
   const { data, error, refetch, loading } = useQuery(USERS, {
     variables: {
@@ -44,29 +48,30 @@ const Users = ({ team, organization, type, typeId, invite }) => {
     notifyOnNetworkStatusChange: true
   })
   const users = useMemo(() => {
-    return getNodes(data)
+    if(data && data.users) return data.users
+    return []
   }, [data])
-  const pageInfo = useMemo(() => {
-    return users.pageInfo
-  }, [users])
   const onFetchMore = async () => {
-    if(pageInfo.hasNextPage) {
+    const usersLength = users.length
+    if(continueFetching && usersLength > 0) {
       await fetchMore({
         variables: {
           ...variables,
-          after: pageInfo.endCursor,
+          after: users[usersLength - 1].id,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if(!fetchMoreResult) return prev
-          return { users: { ...fetchMoreResult.users, edges: [ ...prev.users.edges, ...fetchMoreResult.users.edges ] } }
+          if(!fetchMoreResult) {
+            setContinueFetching(false)
+            return prev
+          }
+          return { users: [ ...fetchMoreResult.users,...prev.users ] }
         }
       })
     }
   }
   return {
-    users: users.nodes,
+    users: users,
     onFetchMore,
-    pageInfo,
     name,
     setName,
     orderBy,

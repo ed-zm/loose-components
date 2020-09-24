@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const USER = gql`
-  query($id: ID!) {
+  query($id: String!) {
     user(where: { id: $id }) {
       id
       biography
@@ -15,7 +15,7 @@ export const USER = gql`
 `
 
 export const GET_S3_SIGNED_URL = gql`
-  query getS3SignedUrl($id: ID!, $fileType: String!, $operation: String!, $folder: String) {
+  query getS3SignedUrl($id: String!, $fileType: String!, $operation: String!, $folder: String) {
     getS3SignedUrl (
       fileType: $fileType,
       operation: $operation,
@@ -26,7 +26,7 @@ export const GET_S3_SIGNED_URL = gql`
 `
 
 export const CHANGE_PICTURE = gql`
-  mutation changePicture($id: ID!, $avatar: String!) {
+  mutation changePicture($id: String!, $avatar: String!) {
     updateUser(where: { id: $id }, data: { avatar: $avatar }) {
       id
       avatar
@@ -35,7 +35,7 @@ export const CHANGE_PICTURE = gql`
 `
 
 export const UPDATE_PROFILE = gql`
-  mutation($id: ID!, $bio: String) {
+  mutation($id: String!, $bio: String) {
     updateUser(
       where: {
         id: $id

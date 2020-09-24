@@ -2,24 +2,27 @@ import React, { useState, useEffect, useContext, useMemo } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { TASKS, ORGANIZATIONS, RESPONSE_REQUESTS } from './index.graphql'
 import { UserContext } from '../../../contexts/User'
-import getNodes from '../../../utils/getNodes'
 
 const Tasks = ({ team, organization }) => {
   const user = useContext(UserContext)
-  const [orderBy, setOrderBy ] = useState('createdAt_DESC')
-  const [ quantity, setQuantity ] = useState(6)
+  const [ continueFetchingTasks, setContinueFetchingTasks ] = useState(true)
+  const [ continueFetchingResponseRequests, setContinueFetchingResponseRequests ] = useState(true)
+  const [orderBy, setOrderBy ] = useState({ createdAt: 'desc' })
+  const [ quantity, setQuantity ] = useState(2)
   const [ titleFilter, setTitleFilter ] = useState('')
   const [ state, setState ] = useState(2)
   const [ organizationOrPersonal, setOrganizationOrPersonal ] = useState('')
   const [ createdOrAssigned, setCreatedOrAssigned ] = useState('')
   const where = {
-    state,
-    title_contains: titleFilter
+    state: { equals: state },
+    title: {
+      contains: titleFilter
+    }
   }
-  if(createdOrAssigned === 'CREATED') where.createdBy = { id: user.id }
-  if(createdOrAssigned === 'ASSIGNED') where.assignedTo = { id: user.id }
-  if(team) where.team = { id: team.id }
-  if(organization) where.organization = { id: organization.id }
+  if(createdOrAssigned === 'CREATED') where.createdBy = { id: { equals: user.id } }
+  if(createdOrAssigned === 'ASSIGNED') where.assignedTo = { id: { equals: user.id } }
+  if(team) where.team = { id: { equals: team.id } }
+  if(organization) where.organization = { id: { equals: organization.id } }
   if(state > 1) {
     delete where.state
   }
@@ -27,7 +30,7 @@ const Tasks = ({ team, organization }) => {
     variables: {
       where,
       first: quantity,
-      orderBy
+      orderBy: [orderBy]
     },
     fetchPolicy: 'network-only'
   })
@@ -46,57 +49,59 @@ const Tasks = ({ team, organization }) => {
     fetchPolicy: 'network-only'
   })
 
-  const responseRequestsPageInfo = useMemo(() => {
-    return getNodes(responseRequestsData).pageInfo
-  }, [responseRequestsData])
-  const tasksPageInfo = useMemo(() => {
-    return getNodes(data).pageInfo
-  }, [data])
-  const pageInfo = useMemo(() => {
-    return {
-      hasNextPage: tasksPageInfo.hasNextPage || responseRequestsPageInfo.hasNextPage,
-      hasPreviousPage: tasksPageInfo.hasPreviousPage || responseRequestsPageInfo.hasPreviousPage
-    }
-  }, [responseRequestsPageInfo, tasksPageInfo])
-
   const tasks = useMemo(() => {
-    return getNodes(data)
+    if(data && data.tasks) return data.tasks
+    return []
   }, [data])
   const responseRequests = useMemo(() => {
-    return getNodes(responseRequestsData)
+    if(responseRequestsData && responseRequestsData.responseRequests) return responseRequestsData.responseRequests
+    return []
   }, [responseRequestsData])
+
   const onFetchMore = async () => {
-    if(tasksPageInfo.hasNextPage) {
+    const tasksLength = tasks.length
+    const responseRequestsLength = responseRequests.length
+    if(continueFetchingTasks && tasksLength > 0) {
       await fetchMore({
         variables: {
           ...variables,
-          after: tasksPageInfo.endCursor,
+          after: {
+            id: tasks[tasksLength - 1].id
+          },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if(!fetchMoreResult) return prev
-          return { tasks: { ...fetchMoreResult.tasks, edges: [ ...prev.tasks.edges, ...fetchMoreResult.tasks.edges ] } }
+          if(!fetchMoreResult) {
+             setContinueFetchingTasks(false)
+            return prev
+          }
+          return { tasks: [ ...prev.tasks, ...fetchMoreResult.tasks ] }
         }
       })
     }
-    if(responseRequestsPageInfo.hasNextPage) {
+    if(continueFetchingResponseRequests && responseRequestsLength > 0) {
       await responseRequestsFetchMore({
         variables: {
           ...variables,
-          after: responseRequestsPageInfo.endCursor,
+          after: responseRequests[responseRequestsLength - 1].id,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if(!fetchMoreResult) return prev
-          return { responseRequests: { ...fetchMoreResult.responseRequests, edges: [ ...prev.responseRequests.edges, ...fetchMoreResult.responseRequests.edges ] } }
+
+          if(!fetchMoreResult) {
+            setContinueFetchingResponseRequests(false)
+            return prev
+          }
+          return { responseRequests: [ ...fetchMoreResult.responseRequests, ...prev.responseRequests ] }
         }
       })
     }
   }
-  const items = [...responseRequests.nodes, ...tasks.nodes]
+  const items = [...responseRequests, ...tasks]
   return {
     tasks: items.sort((a, b) => a.state - b.state),
     // count: tasks.count,
-    pageInfo,
+    // pageInfo,
     variables,
+    continueFetchingTasks,
     loading: loading || responseRequestsLoading,
     error,
     state,

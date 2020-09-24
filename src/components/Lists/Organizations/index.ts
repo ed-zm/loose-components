@@ -2,58 +2,65 @@ import React, { useState, useContext, useMemo } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { ORGANIZATIONS } from './index.graphql'
 import { UserContext } from '../../../contexts/User'
-import getNodes from '../../../utils/getNodes'
 
 const Organizations = () => {
   const user = useContext(UserContext)
+  const [ continueFetching, setContinueFetching ] = useState(true)
   const [ quantity, setQuantity ] = useState(2)
-  const [orderBy, setOrderBy ] = useState('createdAt_DESC')
+  const [orderBy, setOrderBy ] = useState({ createdAt: 'desc' })
   const [ nameFilter, setNameFilter ] = useState('')
   const [ ownerOrMember, setOwnerOrMember ] = useState('')
   const where = {
-    name_contains: nameFilter
+    name: {
+      contains: nameFilter
+    }
   }
-  if(ownerOrMember === 'MEMBER') where.users_some = { id: user.id }
-  if(ownerOrMember === 'OWNER') where.owner = { id: user.id }
+  if(ownerOrMember === 'MEMBER') where.users = { some: { id: { equals: user.id } }  }
+  if(ownerOrMember === 'OWNER') where.ownerId = { equals: user.id }
   const { data, loading, error, variables, fetchMore } = useQuery(ORGANIZATIONS, {
     variables: {
       where,
       first: quantity,
       orderBy
-    }
+    },
+    fetchPolicy: 'network-only'
   })
+  const organizations = useMemo(() => {
+    if(data && data.organizations) return data.organizations
+    return []
+  }, [data])
   const onFetchMore = async () => {
-    if(pageInfo.hasNextPage) {
+    const organizationsLength = organizations.length
+    if(continueFetching && organizationsLength > 0) {
       await fetchMore({
         variables: {
           ...variables,
-          after: pageInfo.endCursor,
+          after: {
+            id: organizations[organizationsLength - 1].id
+          }
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if(!fetchMoreResult) return prev
-          return { organizations: { ...fetchMoreResult.organizations, edges: [ ...prev.organizations.edges, ...fetchMoreResult.organizations.edges ] } }
+          if(!fetchMoreResult) {
+            setContinueFetching(false)
+            return prev
+          }
+          return { organizations: [ ...prev.organizations, ...fetchMoreResult.organizations ] }
         }
       })
     }
   }
-  const organizations = useMemo(() => {
-    return getNodes(data)
-  }, [data])
-  const pageInfo = useMemo(() => {
-    return organizations.pageInfo
-  }, [organizations])
   return {
-    organizations: organizations.nodes,
+    organizations,
     nameFilter,
     setNameFilter,
     onFetchMore,
     loading,
-    pageInfo,
     variables,
     ownerOrMember,
     setOwnerOrMember,
     orderBy,
-    setOrderBy
+    setOrderBy,
+    continueFetching
   }
 }
 

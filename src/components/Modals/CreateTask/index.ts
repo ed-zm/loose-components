@@ -45,7 +45,7 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
       variables: { data: createVariables },
       optimisticResponse: {
         __typename: "Mutation",
-        createTask: {
+        createOneTask: {
           __typename: "Task",
           id: "-1",
           title: title.toLowerCase(),
@@ -80,11 +80,11 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
           createdAt: new Date().toISOString()
         }
       },
-      update: (proxy, { data: { createTask }}) => {
+      update: (proxy, { data: { createOneTask }}) => {
         const data = proxy.readQuery({ query: TASKS, variables })
-        const newTasks = data.tasks.edges.slice()
-        newTasks.unshift({ node: createTask, __typename: "TaskEdge" })
-        proxy.writeQuery({ query: TASKS, variables, data: { tasks: { ...data.tasks, edges: newTasks } } })
+        const newTasks = data.tasks.slice()
+        newTasks.unshift(createOneTask)
+        proxy.writeQuery({ query: TASKS, variables, data: { tasks: newTasks } })
       }
     })
     await setTitle('')

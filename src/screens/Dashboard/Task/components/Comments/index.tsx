@@ -8,9 +8,10 @@ import getNodes from '../../../../../utils/getNodes'
 
 const Comments = ({ task }) => {
   const user = useContext(UserContext)
+  const [ continueFetching, setContinueFetching ] = useState(true)
   const [ comment, setComment ] = useState('')
   const [ mentions, setMentions ] = useState([])
-  const [orderBy, setOrderBy ] = useState('createdAt_ASC')
+  const [orderBy, setOrderBy ] = useState({ createdAt: 'asc' })
   const [ quantity, setQuantity ] = useState(6)
   const { data, loading, variables, fetchMore } = useQuery(COMMENTS, {
     variables: {
@@ -86,28 +87,29 @@ const Comments = ({ task }) => {
     await setComment('')
   }
   const comments = useMemo(() => {
-    return getNodes(data)
+    if(data && data.comments) return data.comments
+    return []
   }, [data])
-  const pageInfo = useMemo(() => {
-    return comments.pageInfo
-  }, [comments])
   const onFetchMore = async () => {
-    if(pageInfo.hasNextPage) {
+    const commentsLength = comments.length
+    if(continueFetching && commentsLength > 0) {
       await fetchMore({
         variables: {
           ...variables,
-          after: pageInfo.endCursor,
+          after: comments[commentsLength - 1].id,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if(!fetchMoreResult) return prev
-          return { comments: { ...fetchMoreResult.comments, edges: [ ...prev.comments.edges, ...fetchMoreResult.comments.edges ] } }
+          if(!fetchMoreResult) {
+            setContinueFetching(false)
+            return prev
+          }
+          return { comments: [ ...fetchMoreResult.comments, ...prev.comments ] }
         }
       })
     }
   }
   return({
-    comments: comments.nodes,
-    pageInfo,
+    comments,
     comment,
     setComment,
     mentions,
@@ -115,7 +117,8 @@ const Comments = ({ task }) => {
     creatingComment,
     onCreateComment,
     loading,
-    onFetchMore
+    onFetchMore,
+    continueFetching
   })
 }
 

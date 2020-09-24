@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const CREATE_TASK = gql`
   mutation($data: TaskCreateInput!) {
-    createTask(data: $data) {
+    createOneTask(data: $data) {
       id
       title
       description

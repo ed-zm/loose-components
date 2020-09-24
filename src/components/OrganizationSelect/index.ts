@@ -7,10 +7,11 @@ const OrganizationSelect = () => {
   const { data, loading, error } = useQuery(ORGANIZATIONS)
   const [ organization, setOrganization ] = useState('')
   const organizations = useMemo(() => {
-    return getNodes(data)
+    if(data && data.organizations) return data.organizations
+    return []
   })
   return {
-    organizations: organizations.nodes,
+    organizations,
     organization,
     setOrganization
   }

@@ -15,7 +15,7 @@ const CreateOrganization = ({ variables }) => {
     },
     optimisticResponse: {
       __typename: 'Mutation',
-      createOrganization: {
+      createOneOrganization: {
         __typename: "Organization",
         id: "-1",
         name,
@@ -27,12 +27,11 @@ const CreateOrganization = ({ variables }) => {
         teams: []
       }
     },
-    update: (proxy, { data: { createOrganization }}) => {
+    update: (proxy, { data: { createOneOrganization }}) => {
       const data = proxy.readQuery({ query: ORGANIZATIONS, variables })
-      // @ts-ignore
-      const newOrganizations = data.organizations.edges.slice()
-      newOrganizations.unshift({ node: createOrganization, __typename: "OrganizationEdge" })
-      proxy.writeQuery({ query: ORGANIZATIONS, variables, data: { organizations: { ...data.organizations, edges: newOrganizations} }})
+      const newOrganizations = data.organizations.slice()
+      newOrganizations.unshift(createOneOrganization)
+      proxy.writeQuery({ query: ORGANIZATIONS, variables, data: { organizations: newOrganizations }})
     }
   })
   }

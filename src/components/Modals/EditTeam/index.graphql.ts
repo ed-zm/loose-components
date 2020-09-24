@@ -1,13 +1,13 @@
 import gql from 'graphql-tag'
 
 export const UPDATE_TEAM = gql`
-  mutation updateTeam($id: ID!, $name: String) {
-    updateTeam(
+  mutation updateOneTeam($id: String!, $name: String) {
+    updateOneTeam(
       where: {
         id: $id
       },
       data: {
-        name: $name
+        name: { set: $name }
       }
     ) {
       id

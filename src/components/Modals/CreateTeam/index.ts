@@ -3,7 +3,6 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_TEAM, ORGANIZATIONS } from './index.graphql'
 import { TEAMS } from '../../Lists/Teams/index.graphql'
 import { UserContext } from '../../../contexts/User'
-import getNodes from '../../../utils/getNodes'
 
 const CreateTeam = ({ variables }) => {
   const user = useContext(UserContext)
@@ -19,28 +18,28 @@ const CreateTeam = ({ variables }) => {
       },
       optimisticResponse: {
         __typename: "Mutation",
-        createTeam: {
+        createOneTeam: {
           __typename: "Team",
           id: "-1",
           name,
           users: []
         }
       },
-      update: (proxy, { data: { createTeam }}) => {
+      update: (proxy, { data: { createOneTeam }}) => {
         const data = proxy.readQuery({ query: TEAMS, variables })
-        //@ts-ignore
-        const newTeams = data.teams.edges.slice()
-        newTeams.unshift({ node: createTeam, __typename: "TeamEdge" })
-        proxy.writeQuery({ query: TEAMS, variables, data: { teams: { ...data.teams, edges: newTeams} } })
+        const newTeams = data.teams.slice()
+        newTeams.unshift(createOneTeam)
+        proxy.writeQuery({ query: TEAMS, variables, data: { teams: newTeams } })
       }
     })
   }
   const organizations = useMemo(() => {
-    return getNodes(orgs)
+    if(orgs && orgs.organizations) return orgs.organizations
+    return []
   }, [orgs])
   useEffect(() => {
-    if(!!organizations.nodes.length) {
-      setOrganization(organizations.nodes[0].id)
+    if(!!organizations.length) {
+      setOrganization(organizations[0].id)
     }
   }, [organizations])
   return({
@@ -48,7 +47,7 @@ const CreateTeam = ({ variables }) => {
     setName,
     organization,
     setOrganization,
-    orgs: organizations.nodes,
+    orgs: organizations,
     onCreateTeam,
     creatingTeam
   })

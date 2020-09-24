@@ -103,7 +103,7 @@ const Organization = ({ id }) => {
       },
       optimisticResponse: {
         __typename: "Mutation",
-        deleteOrganization: {
+        deleteOneOrganization: {
           __typename: "Organization",
           id: organization.id
         }

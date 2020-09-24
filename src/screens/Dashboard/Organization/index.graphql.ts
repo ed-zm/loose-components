@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const ORGANIZATION = gql`
-  query($id: ID!) {
+  query($id: String!) {
     organization(where: { id: $id }) {
       id
       name
@@ -15,8 +15,8 @@ export const ORGANIZATION = gql`
 `
 
 export const DELETE_ORGANIZATION = gql`
-  mutation deleteOrganization($id: ID!) {
-    deleteOrganization(
+  mutation deleteOneOrganization($id: String!) {
+    deleteOneOrganization(
       where: {
       id: $id
     }) {
@@ -49,7 +49,7 @@ export const GITHUB_REPOS = gql`
 `
 
 export const GITHUB_PROJECTS = gql`
-  query($organizationId: ID!) {
+  query($organizationId: String!) {
     githubProjects(organizationId: $organizationId) {
       id
       name
@@ -60,7 +60,7 @@ export const GITHUB_PROJECTS = gql`
 `
 
 export const UNLINK_ORGANIZATION = gql`
-  mutation($organizationId: ID!) {
+  mutation($organizationId: String!) {
     updateOrganization(
       where: {
           id: $organizationId
@@ -78,7 +78,7 @@ export const UNLINK_ORGANIZATION = gql`
 `
 
 export const INVITE_TO_ORGANIZATION = gql`
-  mutation inviteToOrganization($to: ID, $email: String, $userId: ID!, $typeId: ID!) {
+  mutation inviteToOrganization($to: String, $email: String, $userId: String!, $typeId: String!) {
     inviteToOrganization(data: {
       type: ORGANIZATION,
       typeId: $typeId,

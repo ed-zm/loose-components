@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const CREATE_ORGANIZATION = gql`
-  mutation createOrganization($name: String!, $userId: ID!) {
-    createOrganization(data: {
+  mutation createOneOrganization($name: String!, $userId: String!) {
+    createOneOrganization(data: {
       name: $name,
       owner: {
         connect: {

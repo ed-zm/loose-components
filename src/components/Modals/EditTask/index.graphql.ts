@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const UPDATE_TASK = gql`
-  mutation($where: TaskWhereUniqueInput!, $data: TaskUpdateInput) {
-    updateTask(
+  mutation($where: TaskWhereUniqueInput!, $data: TaskUpdateInput!) {
+    updateOneTask(
       where: $where
       data: $data
     ) {

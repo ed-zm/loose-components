@@ -2,60 +2,44 @@ import gql from 'graphql-tag'
 
 export const COMMENTS = gql`
   query comments(
-    $taskId: ID!,
-    $orderBy: CommentOrderByInput,
+    $taskId: String!,
+    $orderBy: [CommentOrderByInput!],
     $first: Int,
     $last: Int,
-    $skip: Int,
-    $before: String,
-    $after: String
+    $before: CommentWhereUniqueInput,
+    $after: CommentWhereUniqueInput
   ) {
     comments(
       where: {
         task: {
-          id: $taskId
+          id: { equals: $taskId }
         }
       },
       first: $first,
       last: $last,
-      skip: $skip,
       before: $before,
       after: $after,
       orderBy: $orderBy
     ) {
-      pageInfo {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
+      id
+      text
+      createdAt
+      updatedAt
+      task {
+        id
       }
-      # aggregate {
-      #  count
-      # }
-      edges {
-        # cursor
-        node {
-          id
-          text
-          createdAt
-          updatedAt
-          task {
-            id
-          }
-          user {
-            id
-            firstName
-            lastName
-          }
-        }
+      user {
+        id
+        firstName
+        lastName
       }
     }
   }
 `
 
 export const CREATE_COMMENT = gql`
-  mutation createComment($text: String!, $taskId: ID!, $userId: ID!, $mentions: [ResponseRequestCreateWithoutTaskInput!]) {
-    updateTask(
+  mutation createComment($text: String!, $taskId: String!, $userId: String!, $mentions: [ResponseRequestCreateWithoutTaskInput!]) {
+    updateOneTask(
       where: { id: $taskId }
       data: {
         comments: {

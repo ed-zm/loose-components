@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const CREATE_TEAM = gql`
-  mutation($organizationId: ID!, $name: String!) {
-    createTeam(data: {
+  mutation($organizationId: String!, $name: String!) {
+    createOneTeam(data: {
       organization: {
         connect: { id: $organizationId },
       },
@@ -22,12 +22,8 @@ export const CREATE_TEAM = gql`
 export const ORGANIZATIONS = gql`
   query {
     organizations {
-      edges {
-        node {
-          id
-          name
-        }
-      }
+      id
+      name
     }
   }
 `
