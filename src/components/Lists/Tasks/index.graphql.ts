@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const TASKS = gql`
-  query(
+  query tasks(
     $where: TaskWhereInput,
     $orderBy: [TaskOrderByInput!],
     $first: Int,
@@ -48,7 +48,7 @@ export const TASKS = gql`
 `
 
 export const RESPONSE_REQUESTS = gql`
-  query(
+  query responseRequests(
     #$where: ResponseRequestWhereInput,
     $orderBy: [ResponseRequestOrderByInput!],
     $first: Int,

@@ -19,7 +19,7 @@ const Users = ({ team, organization, type, typeId, invite }) => {
   if(organization) where.organizations = { some: { id: { equals: organization.id } } }
   if(team) where.teams = { some: { id: { equals: team.id } } }
   if(invite && type && typeId) {
-    where.id = { not: user.id }
+    where.id = { not: { equals: user.id} }
     where.receivedInvites = {
       none: {
         typeId: { equals: typeId },
@@ -70,14 +70,15 @@ const Users = ({ team, organization, type, typeId, invite }) => {
     }
   }
   return {
-    users: users,
+    users,
     onFetchMore,
     name,
     setName,
     orderBy,
     setOrderBy,
     refetch,
-    loading
+    loading,
+    continueFetching
   }
 }
 

@@ -8,7 +8,7 @@ const Tasks = ({ team, organization }) => {
   const [ continueFetchingTasks, setContinueFetchingTasks ] = useState(true)
   const [ continueFetchingResponseRequests, setContinueFetchingResponseRequests ] = useState(true)
   const [orderBy, setOrderBy ] = useState({ createdAt: 'desc' })
-  const [ quantity, setQuantity ] = useState(2)
+  const [ quantity, setQuantity ] = useState(3)
   const [ titleFilter, setTitleFilter ] = useState('')
   const [ state, setState ] = useState(2)
   const [ organizationOrPersonal, setOrganizationOrPersonal ] = useState('')
@@ -34,33 +34,42 @@ const Tasks = ({ team, organization }) => {
     },
     fetchPolicy: 'network-only'
   })
-  const {
-    data: responseRequestsData,
-    loading: responseRequestsLoading,
-    refetch: responseRequestsRefetch,
-    error: responseRequestsError,
-    variables: responseRequestsVariables,
-    fetchMore: responseRequestsFetchMore } = useQuery(RESPONSE_REQUESTS, {
-    variables: {
-      // where,
-      first: quantity,
-      orderBy
-    },
-    fetchPolicy: 'network-only'
-  })
+  // const {
+  //   data: responseRequestsData,
+  //   loading: responseRequestsLoading,
+  //   refetch: responseRequestsRefetch,
+  //   error: responseRequestsError,
+  //   variables: responseRequestsVariables,
+  //   fetchMore: responseRequestsFetchMore } = useQuery(RESPONSE_REQUESTS, {
+  //   variables: {
+  //     where: {
+  //       state: { equals: state },
+  //     },
+  //     first: quantity,
+  //     orderBy: [orderBy]
+  //   },
+  //   fetchPolicy: 'network-only'
+  // })
+  //
+  // const responseRequests = useMemo(() => {
+  //   if(responseRequestsData && responseRequestsData.responseRequests) {
+  //     return responseRequestsData.responseRequests
+  //   }
+  //   return []
+  // }, [responseRequestsData])
+
+  const responseRequests = []
 
   const tasks = useMemo(() => {
     if(data && data.tasks) return data.tasks
     return []
   }, [data])
-  const responseRequests = useMemo(() => {
-    if(responseRequestsData && responseRequestsData.responseRequests) return responseRequestsData.responseRequests
-    return []
-  }, [responseRequestsData])
 
-  const onFetchMore = async () => {
+  const onFetchMore = async (resolve) => {
     const tasksLength = tasks.length
-    const responseRequestsLength = responseRequests.length
+    // const responseRequestsLength = responseRequests.length
+    let tasksPage = []
+    let responseRequestsPage = []
     if(continueFetchingTasks && tasksLength > 0) {
       await fetchMore({
         variables: {
@@ -70,30 +79,33 @@ const Tasks = ({ team, organization }) => {
           },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
+          tasksPage = fetchMoreResult.tasks
+          // debugger
           if(!fetchMoreResult) {
-             setContinueFetchingTasks(false)
             return prev
           }
           return { tasks: [ ...prev.tasks, ...fetchMoreResult.tasks ] }
         }
       })
     }
-    if(continueFetchingResponseRequests && responseRequestsLength > 0) {
-      await responseRequestsFetchMore({
-        variables: {
-          ...variables,
-          after: responseRequests[responseRequestsLength - 1].id,
-        },
-        updateQuery: (prev, { fetchMoreResult }) => {
-
-          if(!fetchMoreResult) {
-            setContinueFetchingResponseRequests(false)
-            return prev
-          }
-          return { responseRequests: [ ...fetchMoreResult.responseRequests, ...prev.responseRequests ] }
-        }
-      })
-    }
+    // if(continueFetchingResponseRequests && responseRequestsLength > 0) {
+    //   await responseRequestsFetchMore({
+    //     variables: {
+    //       ...responseRequestsVariables,
+    //       after: { id: responseRequests[responseRequestsLength - 1].id },
+    //     },
+    //     updateQuery: (prev, { fetchMoreResult }) => {
+    //       responseRequestsPage = fetchMoreResult.responseRequests
+    //       // debugger
+    //       if(!fetchMoreResult.responseRequests.length) {
+    //         return prev
+    //       }
+    //       return { responseRequests: [ ...prev.responseRequests, ...fetchMoreResult.responseRequests ] }
+    //     }
+    //   })
+    // }
+    if(!tasksPage.length && continueFetchingTasks) await setContinueFetchingTasks(false)
+    // if(!responseRequestsPage.length && continueFetchingResponseRequests) await setContinueFetchingResponseRequests(false)
   }
   const items = [...responseRequests, ...tasks]
   return {
@@ -101,8 +113,8 @@ const Tasks = ({ team, organization }) => {
     // count: tasks.count,
     // pageInfo,
     variables,
-    continueFetchingTasks,
-    loading: loading || responseRequestsLoading,
+    continueFetching: continueFetchingTasks /*|| continueFetchingResponseRequests*/,
+    loading: loading /*|| responseRequestsLoading*/,
     error,
     state,
     setState,

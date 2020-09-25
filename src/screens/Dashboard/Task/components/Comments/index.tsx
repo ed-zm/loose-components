@@ -53,7 +53,7 @@ const Comments = ({ task }) => {
       },
       optimisticResponse: {
         __typename: "Mutation",
-        updateTask: {
+        updateOneTask: {
           __typename: "Task",
           id: task.id,
           comments: [{
@@ -76,12 +76,12 @@ const Comments = ({ task }) => {
           }]
         }
       },
-      update: (proxy, { data: { updateTask } }) => {
+      update: (proxy, { data: { updateOneTask } }) => {
         const data: any = proxy.readQuery({ query: COMMENTS, variables })
-        const newComments = data.comments.edges.slice()
-        newComments.push({ node: updateTask.comments[updateTask.comments.length - 1], __typename: "CommentEdge" })
-        // newComments.push(updateTask.comments[updateTask.comments.length - 1])
-        proxy.writeQuery({ query: COMMENTS, variables, data: { comments: { ...data.comments, edges: newComments }} })
+        const newComments = data.comments.slice()
+        newComments.push(updateOneTask.comments[updateOneTask.comments.length - 1])
+        console.log(newComments)
+        proxy.writeQuery({ query: COMMENTS, variables, data: { comments: [ ...data.comments, ...newComments ]} })
       }
     })
     await setComment('')
@@ -96,14 +96,14 @@ const Comments = ({ task }) => {
       await fetchMore({
         variables: {
           ...variables,
-          after: comments[commentsLength - 1].id,
+          after: { id: comments[commentsLength - 1].id },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if(!fetchMoreResult) {
             setContinueFetching(false)
             return prev
           }
-          return { comments: [ ...fetchMoreResult.comments, ...prev.comments ] }
+          return { comments: [ ...prev.comments, ...fetchMoreResult.comments ] }
         }
       })
     }

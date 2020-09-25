@@ -12,13 +12,13 @@ export const GITHUB_ORGANIZATIONS = gql`
 
 
 export const LINK_ORGANIZATION = gql`
-  mutation($organizationId: ID!, $organization: String!) {
-    updateOrganization(
+  mutation($organizationId: String!, $organization: String!) {
+    updateOneOrganization(
       where: {
           id: $organizationId
       },
       data: {
-          githubOrganization: $organization
+          githubOrganization: { set: $organization }
       }
     ) {
       id

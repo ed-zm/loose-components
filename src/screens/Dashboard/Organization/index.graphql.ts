@@ -49,7 +49,7 @@ export const GITHUB_REPOS = gql`
 `
 
 export const GITHUB_PROJECTS = gql`
-  query($organizationId: String!) {
+  query($organizationId: ID!) {
     githubProjects(organizationId: $organizationId) {
       id
       name
@@ -61,13 +61,13 @@ export const GITHUB_PROJECTS = gql`
 
 export const UNLINK_ORGANIZATION = gql`
   mutation($organizationId: String!) {
-    updateOrganization(
+    updateOneOrganization(
       where: {
           id: $organizationId
       },
       data: {
-          githubOrganization: "",
-          githubToken: ""
+          githubOrganization: { set: "" },
+          githubToken: { set: "" }
       }
     ) {
       id
