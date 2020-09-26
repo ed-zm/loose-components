@@ -39,7 +39,7 @@ const Users = ({ team, organization, type, typeId, invite }) => {
     delete where.organizations
     delete where.teams
   }
-  const { data, error, refetch, loading } = useQuery(USERS, {
+  const { data, error, refetch, fetchMore, variables, loading } = useQuery(USERS, {
     variables: {
       where,
       orderBy
@@ -57,14 +57,14 @@ const Users = ({ team, organization, type, typeId, invite }) => {
       await fetchMore({
         variables: {
           ...variables,
-          after: users[usersLength - 1].id,
+          after: { id: users[usersLength - 1].id },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if(!fetchMoreResult) {
+          if(!fetchMoreResult.users.length) {
             setContinueFetching(false)
             return prev
           }
-          return { users: [ ...fetchMoreResult.users,...prev.users ] }
+          return { users: [ ...prev.users, ...fetchMoreResult.users ] }
         }
       })
     }

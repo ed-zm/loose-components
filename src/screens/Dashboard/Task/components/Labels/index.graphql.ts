@@ -1,13 +1,13 @@
 import gql from 'graphql-tag'
 
 export const LABELS = gql`
-  query labels($taskId: ID!, $organizationId: ID) {
+  query labels($taskId: String!, $organizationId: String) {
     labels(where: {
       organization: {
-        id: $organizationId
+        id: { equals: $organizationId }
       }
-      tasks_some: {
-        id: $taskId
+      tasks: {
+        some: { id: { equals: $taskId } }
       }
     }) {
       id
@@ -21,8 +21,8 @@ export const LABELS = gql`
 `
 
 export const ADD_LABEL = gql`
-  mutation addLabel($text: String!, $taskId: ID!, $organizationId: ID!) {
-    createLabel(data: {
+  mutation addLabel($text: String!, $taskId: String!, $organizationId: String!) {
+    createOneLabel(data: {
       text: $text,
       color: "green",
       organization: {
@@ -43,8 +43,8 @@ export const ADD_LABEL = gql`
 `
 
 export const REMOVE_LABEL = gql`
-  mutation removeLabel($id: ID!, $taskId: ID!) {
-    updateLabel(
+  mutation removeLabel($id: String!, $taskId: String!) {
+    updateOneLabel(
       where: {
         id: $id
       },

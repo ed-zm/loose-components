@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const ASSIGN_TASK = gql`
-  mutation assignTask($id: ID!, $userId: ID!) {
-    updateTask(
+  mutation assignTask($id: String!, $userId: String!) {
+    updateOneTask(
       where: { id: $id },
       data: {
         assignedTo: {
@@ -24,8 +24,8 @@ export const ASSIGN_TASK = gql`
 `
 
 export const UNASSIGN_TASK = gql`
-  mutation assignTask($id: ID!, $userId: ID!) {
-    updateTask(
+  mutation assignTask($id: String!, $userId: String!) {
+    updateOneTask(
       where: { id: $id },
       data: {
         assignedTo: {

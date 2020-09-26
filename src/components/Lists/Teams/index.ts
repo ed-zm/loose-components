@@ -37,7 +37,7 @@ const Teams = ({ organization }) => {
           },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if(!fetchMoreResult) {
+          if(!fetchMoreResult.teams.length) {
             setContinueFetching(false)
             return prev
           }

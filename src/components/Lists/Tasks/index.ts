@@ -81,7 +81,7 @@ const Tasks = ({ team, organization }) => {
         updateQuery: (prev, { fetchMoreResult }) => {
           tasksPage = fetchMoreResult.tasks
           // debugger
-          if(!fetchMoreResult) {
+          if(!fetchMoreResult.tasks.length) {
             return prev
           }
           return { tasks: [ ...prev.tasks, ...fetchMoreResult.tasks ] }

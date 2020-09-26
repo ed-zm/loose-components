@@ -40,7 +40,7 @@ const Organizations = () => {
           }
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if(!fetchMoreResult) {
+          if(!fetchMoreResult.organizations.length) {
             setContinueFetching(false)
             return prev
           }

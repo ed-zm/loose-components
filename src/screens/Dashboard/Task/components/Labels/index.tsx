@@ -14,7 +14,7 @@ const Labels = ({ task }) => {
       variables: { taskId: task.id, text: `${label}-${organizationId.id}`, organizationId },
       optimisticResponse: {
         __typename: "Mutation",
-        createLabel: {
+        createOneLabel: {
           __typename: "Label",
           id: -1,
           color: "green",
@@ -25,12 +25,12 @@ const Labels = ({ task }) => {
           }
         }
       },
-      update: (proxy, { data: { createLabel } }) => {
+      update: (proxy, { data: { createOneLabel } }) => {
         const proxyData: any = proxy.readQuery({ query: LABELS, variables: { taskId: task.id, organizationId } })
         const newLabels = proxyData.labels.slice()
-        const labelExists = newLabels.find(label => label.text === createLabel.text )
+        const labelExists = newLabels.find(label => label.text === createOneLabel.text )
         if(!labelExists) {
-          newLabels.push(createLabel)
+          newLabels.push(createOneLabel)
           proxy.writeQuery({ query: LABELS, variables: { taskId: task.id, organizationId }, data: { labels: newLabels } })
         }
       }
@@ -42,14 +42,14 @@ const Labels = ({ task }) => {
       variables: { taskId: task.id, id },
       optimisticResponse: {
         __typename: "Mutation",
-        updateLabel: {
+        updateOneLabel: {
           __typename: "Label",
           id
         }
       },
-      update: (proxy, { data: { updateLabel } }) => {
+      update: (proxy, { data: { updateOneLabel } }) => {
         const proxyData: any = proxy.readQuery({ query: LABELS, variables: { taskId: task.id, organizationId } })
-        const newLabels = proxyData.labels.filter(label => label.id !== updateLabel.id)
+        const newLabels = proxyData.labels.filter(label => label.id !== updateOneLabel.id)
         proxy.writeQuery({ query: LABELS, variables: { taskId: task.id, organizationId }, data: { labels: newLabels } })
       }
     })
