@@ -15,7 +15,7 @@ export const USER = gql`
 `
 
 export const GET_S3_SIGNED_URL = gql`
-  query getS3SignedUrl($id: String!, $fileType: String!, $operation: String!, $folder: String) {
+  query getS3SignedUrl($id: ID!, $fileType: String!, $operation: String!, $folder: String) {
     getS3SignedUrl (
       fileType: $fileType,
       operation: $operation,
@@ -27,7 +27,7 @@ export const GET_S3_SIGNED_URL = gql`
 
 export const CHANGE_PICTURE = gql`
   mutation changePicture($id: String!, $avatar: String!) {
-    updateUser(where: { id: $id }, data: { avatar: $avatar }) {
+    updateOneUser(where: { id: $id }, data: { avatar: { set: $avatar } }) {
       id
       avatar
     }
@@ -36,12 +36,12 @@ export const CHANGE_PICTURE = gql`
 
 export const UPDATE_PROFILE = gql`
   mutation($id: String!, $bio: String) {
-    updateUser(
+    updateOneUser(
       where: {
         id: $id
       },
       data: {
-        biography: $bio
+        biography: { set: $bio }
       }
     ) {
       id

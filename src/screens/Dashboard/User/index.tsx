@@ -30,7 +30,7 @@ const User = ({id }) => {
       },
       optimisticResponse: {
         __typename: 'Mutation',
-        updateUser: {
+        updateOneUser: {
           __typename: "User",
           id,
           bio
