@@ -1,15 +1,15 @@
 import gql from 'graphql-tag'
 
 export const UPDATE_COMMENT = gql`
-  mutation updateComment(
+  mutation updateOneComment(
     $text: String!,
-    $commentId: ID!,
+    $commentId: String!,
     $mentions: [ResponseRequestCreateWithoutTaskInput!])
   {
-    updateComment(
+    updateOneComment(
       where: { id: $commentId }
       data: {
-        text: $text,
+        text: { set: $text },
         task: {
           update: {
             responseRequests: {
@@ -29,10 +29,10 @@ export const UPDATE_COMMENT = gql`
 `
 
 export const DELETE_COMMENT = gql`
-  mutation deleteComment(
-    $id: ID!
+  mutation deleteOneComment(
+    $id: String!
   ) {
-    deleteComment(
+    deleteOneComment(
       where: {
         id: $id
       }

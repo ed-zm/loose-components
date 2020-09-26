@@ -6,7 +6,7 @@ import { UPDATE_COMMENT, DELETE_COMMENT } from './index.graphql'
 import { COMMENTS } from '../index.graphql'
 
 
-const Comment = ({ task, id, text }) => {
+const Comment = ({ task, id, text, variables }) => {
   const user = useContext(UserContext)
   const [ comment, setComment ] = useState(text)
   const [ mentions, setMentions ] = useState([])
@@ -35,7 +35,7 @@ const Comment = ({ task, id, text }) => {
       },
       optimisticResponse: {
         __typename: "Mutation",
-        updateComment: {
+        updateOneComment: {
           __typename: "Comment",
           id,
           text: comment,
@@ -57,15 +57,15 @@ const Comment = ({ task, id, text }) => {
       },
       optimisticResponse: {
         __typename: "Mutation",
-        deleteComment: {
+        deleteOneComment: {
           __typename: "Comment",
           id
         }
       },
-      update: (proxy, { data: { deleteComment }}) => {
-        const proxyData: any = proxy.readQuery({ query: COMMENTS, variables: { taskId: task.id } })
+      update: (proxy, { data: { deleteOneComment }}) => {
+        const proxyData: any = proxy.readQuery({ query: COMMENTS, variables })
         const newComments = proxyData.comments.filter(comment => comment.id !== id)
-        proxy.writeQuery({ query: COMMENTS, variables: { taskId: task.id }, data: { comments: newComments } })
+        proxy.writeQuery({ query: COMMENTS, variables, data: { comments: newComments } })
       }
     })
   }

@@ -58,7 +58,7 @@ const Comments = ({ task }) => {
           id: task.id,
           comments: [{
             __typename: "Comment",
-            id: -1,
+            id: '-1',
             text: comment,
             state: 0,
             task: {
@@ -79,9 +79,11 @@ const Comments = ({ task }) => {
       update: (proxy, { data: { updateOneTask } }) => {
         const data: any = proxy.readQuery({ query: COMMENTS, variables })
         const newComments = data.comments.slice()
+        console.log(updateOneTask.comments[updateOneTask.comments.length - 1])
         newComments.push(updateOneTask.comments[updateOneTask.comments.length - 1])
+        console.log(data.comments)
         console.log(newComments)
-        proxy.writeQuery({ query: COMMENTS, variables, data: { comments: [ ...data.comments, ...newComments ]} })
+        proxy.writeQuery({ query: COMMENTS, variables, data: { comments: newComments } })
       }
     })
     await setComment('')
@@ -118,7 +120,8 @@ const Comments = ({ task }) => {
     onCreateComment,
     loading,
     onFetchMore,
-    continueFetching
+    continueFetching,
+    variables
   })
 }
 
