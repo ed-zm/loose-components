@@ -8,6 +8,7 @@ const SignUp = ({ callback, inviteCode }) => {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [username, setUsername] = useState('')
+  const [plan, setPlan] = useState("");
   const [signUpMutation, { data, loading: signingUp, error }] = useMutation(SIGN_UP)
   useEffect(() => {
     if(data && !!data.signUp) {
@@ -15,7 +16,8 @@ const SignUp = ({ callback, inviteCode }) => {
       callback(token)
     }
   }, [data])
-  const onSignUp = async () => {
+  const onSignUp = async (token) => {
+    console.log('loose-components', token.id)
     await signUpMutation({
       variables: {
         email,
@@ -23,7 +25,9 @@ const SignUp = ({ callback, inviteCode }) => {
         firstName,
         lastName,
         username,
-        inviteCode
+        inviteCode,
+        stripeToken: token.id,
+        subscription: plan
       }
     })
   }
@@ -41,7 +45,9 @@ const SignUp = ({ callback, inviteCode }) => {
     onSignUp,
     signingUp,
     error,
-    data
+    data,
+    plan,
+    setPlan,
   })
 }
 
