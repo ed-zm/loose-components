@@ -12,7 +12,7 @@ const UpdateOrganization = ({ organization }) => {
     },
     optimisticResponse: {
       __typename: 'Mutation',
-      updateOrganization: {
+      updateOneOrganization: {
         __typename: "Organization",
         id: organization.id,
         name

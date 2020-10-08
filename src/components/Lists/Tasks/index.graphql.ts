@@ -22,6 +22,8 @@ export const TASKS = gql`
       estimated
       state
       code
+      priority
+      snoozedUntil
       createdBy {
         id
         firstName

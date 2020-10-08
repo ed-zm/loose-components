@@ -92,7 +92,7 @@ const Organization = ({ id }) => {
       if(!organization.githubOrganization && (organization.githubToken || token)) {
         actions.openModal({ modal: 'GithubOrganizations', title: '', params: { organization } })
       } else {
-        fetchData()
+        if(organization.githubOrganization) fetchData()
       }
     }
   }, [token, organization, tab])

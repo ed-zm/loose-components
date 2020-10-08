@@ -9,6 +9,7 @@ export const TASK = gql`
       state
       code
       estimated
+      priority
       assignedTo {
         id
         firstName

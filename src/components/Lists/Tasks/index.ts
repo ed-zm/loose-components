@@ -108,6 +108,7 @@ const Tasks = ({ team, organization }) => {
     // if(!responseRequestsPage.length && continueFetchingResponseRequests) await setContinueFetchingResponseRequests(false)
   }
   const items = [...responseRequests, ...tasks]
+  console.log(tasks)
   return {
     tasks: items.sort((a, b) => a.state - b.state),
     // count: tasks.count,

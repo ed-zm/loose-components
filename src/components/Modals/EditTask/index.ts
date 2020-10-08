@@ -10,6 +10,7 @@ const UpdateTask = ({ task, callback = () => {} }) => {
   const [ title, setTitle ] = useState(task.title)
   const [ description, setDescription ] = useState(task.description)
   const [ estimated, setEstimated ] = useState(task.estimated)
+  const [ priority, setPriority ] = useState(task.priority)
   const onUpdateTask = async () => {
     const where = {
       id: task.id
@@ -21,6 +22,7 @@ const UpdateTask = ({ task, callback = () => {} }) => {
     }
     if(task.organization && !organization) data.organization = { disconnect: true }
     if(organization) data.organization = { connect: { id: organization } }
+    if(priority !== task.priority) data.priority = { set: parseInt(priority, 10), }
     await updateTask({
       variables: {
         where,
@@ -33,6 +35,7 @@ const UpdateTask = ({ task, callback = () => {} }) => {
           id: task.id,
           title,
           estimated,
+          priority: parseInt(priority, 10),
           description,
           updatedAt: new Date().toISOString()
         }
@@ -53,7 +56,9 @@ const UpdateTask = ({ task, callback = () => {} }) => {
     setDescription,
     updatingTask,
     organization,
-    setOrganization
+    setOrganization,
+    priority,
+    setPriority
   }
 }
 

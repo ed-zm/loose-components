@@ -17,6 +17,7 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
   const [ estimated, setEstimated ] = useState(0)
   const [ teamTask, setTeamTask ] = useState(false)
   const [ assignTo, setAssignTo ] = useState(null)
+  const [ priority, setPriority ] = useState(0)
   const useDraft = async (draft) => {
     await setTitle(draft.title)
     await setTeam(draft.team)
@@ -33,6 +34,7 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
       description,
       state: 0,
       estimated,
+      priority: parseInt(priority, 10),
       createdBy: { connect: { id: user.id } },
     }
     if(!!assignTo && !teamTask) createVariables.assignedTo = { connect : { id: assignTo.id } }
@@ -51,6 +53,7 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
           title: title.toLowerCase(),
           state: 0,
           estimated,
+          priority: parseInt(priority, 10),
           code: 'AAAA',
           description,
           createdBy: {
@@ -77,7 +80,8 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
             __typename: "Team",
             id: team
           },
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          snoozedUntil: new Date().toISOString()
         }
       },
       update: (proxy, { data: { createOneTask }}) => {
@@ -131,7 +135,9 @@ const CreateTask = ({ tasks, variables, callback = () => {} }) => {
     creatingTask,
     setAssignTo,
     assignTo,
-    useDraft
+    useDraft,
+    priority,
+    setPriority
   }
 }
 

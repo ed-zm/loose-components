@@ -8,6 +8,7 @@ export const UPDATE_TASK = gql`
     ) {
       id
       title
+      priority
       organization {
         id
       }

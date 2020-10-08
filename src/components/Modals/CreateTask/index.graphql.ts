@@ -9,6 +9,8 @@ export const CREATE_TASK = gql`
       estimated
       state
       code
+      priority
+      snoozedUntil
       createdBy {
         id
         firstName
