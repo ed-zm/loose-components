@@ -30,7 +30,7 @@ export interface TaskContextType {
 }
 
 const initialState: TaskContextType = {
-  draft: {},
+  draft: null,
   actions: {
     setDraft: () => null
   }

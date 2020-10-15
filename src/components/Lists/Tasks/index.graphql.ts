@@ -51,18 +51,14 @@ export const TASKS = gql`
 
 export const RESPONSE_REQUESTS = gql`
   query responseRequests(
-    #$where: ResponseRequestWhereInput,
+    $where: ResponseRequestWhereInput,
     $orderBy: [ResponseRequestOrderByInput!],
     $first: Int,
-    $last: Int,
-    $before: ResponseRequestWhereUniqueInput,
     $after: ResponseRequestWhereUniqueInput
   ) {
     responseRequests(
-      #where: $where,
+      where: $where,
       first: $first,
-      last: $last,
-      before: $before,
       after: $after,
       orderBy: $orderBy
     ) {

@@ -7,7 +7,7 @@ const now = new Date()
 
 const Prio = () => {
   const [ snoozeTask ] = useMutation(SNOOZE_TASK)
-  const { data, loading, error } = useQuery(PRIO_TASKS, {
+  const { data, loading, error, refetch, variables } = useQuery(PRIO_TASKS, {
     variables: {
       where: {
         state: { equals: 0 },
@@ -34,11 +34,10 @@ const Prio = () => {
         variables.data.snoozedUntil = { set: moment().add(snoozeTill, 'hours').toISOString() }
       }
     }
-    console.log('NOW', moment().toISOString())
-    console.log('SNOOZED', variables)
     await snoozeTask({
-      variables
+      variables,
     })
+    await refetch()
   }
   const tasks = useMemo(() => {
     if(data && data.tasks) return data.tasks

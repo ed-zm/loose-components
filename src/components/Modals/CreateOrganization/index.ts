@@ -8,10 +8,12 @@ const CreateOrganization = ({ variables }) => {
   const user = useContext(UserContext)
   const [ createOrganization ] = useMutation(CREATE_ORGANIZATION)
   const [ name, setName ] = useState('')
-  const onCreateOrganization = async () => {
+  const [plan, setPlan] = useState("");
+  const onCreateOrganization = async (token) => {
     createOrganization({ variables: {
       name,
-      userId: user.id
+      userId: user.id,
+      stripeId: token.id
     },
     optimisticResponse: {
       __typename: 'Mutation',
@@ -38,7 +40,9 @@ const CreateOrganization = ({ variables }) => {
   return {
     onCreateOrganization,
     name,
-    setName
+    setName,
+    plan,
+    setPlan,
   }
 }
 

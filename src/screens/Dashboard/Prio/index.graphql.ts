@@ -44,7 +44,7 @@ export const PRIO_TASKS = gql`
 `
 
 export const SNOOZE_TASK = gql`
-  mutation ($taskId: String!, $data: TaskUpdateInput!) {
+  mutation snoozeTask($taskId: String!, $data: TaskUpdateInput!) {
     updateOneTask(
       where: {
         id: $taskId
