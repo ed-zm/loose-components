@@ -20,7 +20,10 @@ const UpdateTask = ({ task, callback = () => {} }) => {
       description: { set: description },
       estimated: { set: estimated },
     }
-    if(task.organization && !organization) data.organization = { disconnect: true }
+    if(task.organization && !organization) {
+      data.organization = { disconnect: true }
+      if(task.assignedTo) data.assignedTo = { disconnect: true }
+    }
     if(organization) data.organization = { connect: { id: organization } }
     if(priority !== task.priority) data.priority = { set: parseInt(priority, 10), }
     await updateTask({
@@ -37,7 +40,14 @@ const UpdateTask = ({ task, callback = () => {} }) => {
           estimated,
           priority: parseInt(priority, 10),
           description,
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
+          assignedTo: null,
+          organization: organization ?
+            {
+              id: organization,
+              __typename: 'Organization'
+            } : null
+
         }
       }
     })

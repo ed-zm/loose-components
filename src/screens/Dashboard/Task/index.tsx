@@ -33,11 +33,10 @@ const Task = ({ id }) => {
     return null
   }, [data])
   useEffect(() => {
-    if(task &&
-      ((task.organization && task.organization.users.length > 0) ||
-      (task.createdBy.id === user.id))
-    ) {
+    if(task?.organization?.users?.length > 0) {
       setIsMember(true)
+    } else {
+      if(isMember) setIsMember(false)
     }
   }, [task])
   return({

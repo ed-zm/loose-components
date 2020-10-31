@@ -12,6 +12,9 @@ export const UPDATE_TASK = gql`
       organization {
         id
       }
+      assignedTo {
+        id
+      }
       description
       estimated
       updatedAt

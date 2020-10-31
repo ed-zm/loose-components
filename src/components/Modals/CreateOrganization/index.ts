@@ -25,7 +25,14 @@ const CreateOrganization = ({ variables }) => {
           id: user.id,
           __typename: "User"
         },
-        users: [],
+        users: [
+          {
+            id: user.id,
+            firstName: user.firstName,
+            avatar: user.avatar,
+            __typename: "User"
+          }
+        ],
         teams: []
       }
     },

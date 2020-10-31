@@ -9,6 +9,11 @@ export const CREATE_ORGANIZATION = gql`
         connect: {
           id: $userId
         }
+      },
+      users: {
+        connect: [
+          { id: $userId }
+        ]
       }
     }) {
       id
